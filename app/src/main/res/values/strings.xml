@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NoYouPick</string>
+    <string name="pick_movie">Pick a Movie</string>
+    <string name="pick_tv_show">Pick a TV Show</string>
+    <string name="pick_both">Pick from Both</string>
+    <string name="submit_caps">SUBMIT</string>
+    <string name="first_step_instructions">First, select the type of media you would like to watch.</string>
 </resources>
