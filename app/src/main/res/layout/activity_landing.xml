@@ -47,7 +47,7 @@
 
         <!--Button BG should turn white with black text once user selects an option-->
         <TextView
-            android:id="@+id/btnSubmitMediaTypeChoice"
+            android:id="@+id/btnNext"
             android:text="@string/next_caps"
             style="@style/user_selection_submit_button"
             />

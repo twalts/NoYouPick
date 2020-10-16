@@ -16,7 +16,6 @@ class GenreSelectionActivity : AppCompatActivity() {
 
     private var mGenreList : ArrayList<GenreItem> = ArrayList()
     private var mSelectedGenreList : ArrayList<GenreItem> = ArrayList()
-    private var isFirstSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +24,11 @@ class GenreSelectionActivity : AppCompatActivity() {
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            if (isFirstSelected) {
+            if (mSelectedGenreList.isEmpty()) {
                 val mediaType = when (intent.getIntExtra("MEDIA_TYPE", 0)) {
-                    1 -> "Movie"
-                    2 -> "TV Show"
-                    3 -> "Both"
+                    Constants.MEDIA_TYPE_MOVIE -> "Movie"
+                    Constants.MEDIA_TYPE_TV -> "TV Show"
+                    Constants.MEDIA_TYPE_BOTH -> "Both"
                     else -> "ERROR"
                 }
 
@@ -54,12 +53,6 @@ class GenreSelectionActivity : AppCompatActivity() {
     }
 
     private fun genreClicked(genreItem: GenreItem) {
-        if (!isFirstSelected) {
-            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.off_black))
-            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
-            isFirstSelected = true
-        }
-
         if (genreItem.isSelected) {
             mSelectedGenreList.add(genreItem)
         } else {
@@ -69,7 +62,9 @@ class GenreSelectionActivity : AppCompatActivity() {
         if (mSelectedGenreList.isEmpty()) {
             btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this, R.color.unselected_submit_button_background))
             btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.unselected_submit_button_text))
-            isFirstSelected = false
+        } else {
+            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.off_black))
+            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
         }
     }
 

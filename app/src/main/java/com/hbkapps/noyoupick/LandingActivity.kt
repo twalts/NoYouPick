@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_landing.*
 class LandingActivity : AppCompatActivity() {
 
     private var mediaType : Int = 0
-    private var isFirstSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,8 +20,8 @@ class LandingActivity : AppCompatActivity() {
     }
 
     private fun setUpButtons() {
-        btnSubmitMediaTypeChoice.setOnClickListener {
-            if (mediaType !=0) {
+        btnNext.setOnClickListener {
+            if (mediaType != 0) {
                 val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
                 intent.putExtra("MEDIA_TYPE", mediaType)
                 startActivity(intent)
@@ -31,63 +30,47 @@ class LandingActivity : AppCompatActivity() {
         }
 
         btnPickMovie.setOnClickListener {
-            if (!isFirstSelected) {
-                setSelected(btnSubmitMediaTypeChoice)
-                isFirstSelected = true
-            }
-
-            if (mediaType != 1) {
-                mediaType = 1
-                chooseMediaType()
+            if (mediaType != Constants.MEDIA_TYPE_MOVIE) {
+                mediaType = Constants.MEDIA_TYPE_MOVIE
+                chooseMediaTypeAndHighlightNextButton()
             }
         }
 
         btnPickTelevision.setOnClickListener {
-            if (!isFirstSelected) {
-                setSelected(btnSubmitMediaTypeChoice)
-                isFirstSelected = true
-            }
-
-            if (mediaType != 2) {
-                mediaType = 2
-                chooseMediaType()
+            if (mediaType != Constants.MEDIA_TYPE_TV) {
+                mediaType = Constants.MEDIA_TYPE_TV
+                chooseMediaTypeAndHighlightNextButton()
             }
         }
 
         btnPickBoth.setOnClickListener {
-            if (!isFirstSelected) {
-                setSelected(btnSubmitMediaTypeChoice)
-                isFirstSelected = true
-            }
-
-            if (mediaType != 3) {
-                mediaType = 3
-                chooseMediaType()
+            if (mediaType != Constants.MEDIA_TYPE_BOTH) {
+                mediaType = Constants.MEDIA_TYPE_BOTH
+                chooseMediaTypeAndHighlightNextButton()
             }
         }
     }
 
-    private fun chooseMediaType() {
-        //1 - movie, 2 - TV, 3 - both
+    private fun chooseMediaTypeAndHighlightNextButton() {
         when (mediaType) {
-            1 -> {
+            Constants.MEDIA_TYPE_MOVIE -> {
                 clearAllSelections()
                 setSelected(btnPickMovie)
             }
 
-            2 -> {
+            Constants.MEDIA_TYPE_TV -> {
                 clearAllSelections()
                 setSelected(btnPickTelevision)
             }
 
-            3 -> {
+            Constants.MEDIA_TYPE_BOTH -> {
                 clearAllSelections()
                 setSelected(btnPickBoth)
             }
         }
+        setSelected(btnNext)
     }
 
-    //only call right before using setSelected()
     private fun clearAllSelections() {
         btnPickMovie.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
