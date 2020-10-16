@@ -1,8 +1,6 @@
 package com.hbkapps.noyoupick
 
-import android.graphics.Typeface
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,7 +14,8 @@ class GenreSelectionActivity : AppCompatActivity() {
     private lateinit var viewAdapter : RecyclerView.Adapter<*>
     private lateinit var viewManager : RecyclerView.LayoutManager
 
-    private var mGenreList : ArrayList<String> = ArrayList()
+    private var mGenreList : ArrayList<GenreItem> = ArrayList()
+    private var mSelectedGenreList : ArrayList<GenreItem> = ArrayList()
     private var isFirstSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,18 +33,18 @@ class GenreSelectionActivity : AppCompatActivity() {
                     else -> "ERROR"
                 }
 
-                Toast.makeText(this, "Media type is $mediaType, list of genres is: $mGenreList", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Media type is $mediaType, list of genres is: $mSelectedGenreList", Toast.LENGTH_SHORT).show()
             }
         }
 
     }
 
     private fun setUpRecyclerView() {
-        val genreList = ArrayList(arrayListOf(*resources.getStringArray(R.array.genre_list)))
-
+        mGenreList = setUpGenreList()
         viewManager = LinearLayoutManager(this)
-        viewAdapter = UserSelectionViewAdapter(genreList) { genreTV: TextView -> genreClicked(genreTV) }
-
+        viewAdapter = UserSelectionViewAdapter(mGenreList) { genre: GenreItem ->
+            genreClicked(genre)
+        }
 
         recyclerView = rvGenreChoices.apply {
             setHasFixedSize(true)
@@ -54,38 +53,44 @@ class GenreSelectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun genreClicked(v : TextView) {
+    private fun genreClicked(genreItem: GenreItem) {
         if (!isFirstSelected) {
-            setSelected(btnSubmitGenreChoice)
+            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.off_black))
+            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
             isFirstSelected = true
         }
 
-        if (v.typeface == Typeface.DEFAULT_BOLD) {
-            setUnSelected(v)
-            mGenreList.remove((v.text).toString())
+        if (genreItem.isSelected) {
+            mSelectedGenreList.add(genreItem)
         } else {
-            setSelected(v)
-            mGenreList.add((v.text).toString())
+            mSelectedGenreList.remove(genreItem)
         }
 
-        if (mGenreList.isEmpty()) {
+        if (mSelectedGenreList.isEmpty()) {
             btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this, R.color.unselected_submit_button_background))
             btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.unselected_submit_button_text))
             isFirstSelected = false
         }
     }
 
-    //this function repeats from LandingActivity - should live somewhere other than both activities so we can call both
-    private fun setSelected(v : TextView) {
-        v.setTextColor(ContextCompat.getColor(this, R.color.off_black))
-        v.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
-        v.setTypeface(null, Typeface.BOLD)
-    }
+    private fun setUpGenreList() : ArrayList<GenreItem> {
+        val genreList = ArrayList<GenreItem>()
+        genreList.add(GenreItem(10759, "Action & Adventure", false))
+        genreList.add(GenreItem(16, "Animation", false))
+        genreList.add(GenreItem(35, "Comedy", false))
+        genreList.add(GenreItem(80, "Crime", false))
+        genreList.add(GenreItem(99, "Documentary", false))
+        genreList.add(GenreItem(18, "Drama", false))
+        genreList.add(GenreItem(10751, "Family", false))
+        genreList.add(GenreItem(10762, "Kids", false))
+        genreList.add(GenreItem(9648, "Mystery", false))
+        genreList.add(GenreItem(10763, "News", false))
+        genreList.add(GenreItem(10764, "Reality", false))
+        genreList.add(GenreItem(10765, "Sci-fi and Fantasy", false))
+        genreList.add(GenreItem(10768, "War & Politics", false))
+        genreList.add(GenreItem(37, "Western", false))
 
-    private fun setUnSelected(v : TextView) {
-        v.setTextColor(ContextCompat.getColor(this, R.color.white))
-        v.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_stroke_background)
-        v.setTypeface(null, Typeface.NORMAL)
+        return genreList
     }
 
     override fun onBackPressed() {
