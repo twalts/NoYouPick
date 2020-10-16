@@ -24,7 +24,7 @@ class GenreSelectionActivity : AppCompatActivity() {
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            if (mSelectedGenreList.isEmpty()) {
+            if (mSelectedGenreList.isNotEmpty()) {
                 val mediaType = when (intent.getIntExtra("MEDIA_TYPE", 0)) {
                     Constants.MEDIA_TYPE_MOVIE -> "Movie"
                     Constants.MEDIA_TYPE_TV -> "TV Show"
