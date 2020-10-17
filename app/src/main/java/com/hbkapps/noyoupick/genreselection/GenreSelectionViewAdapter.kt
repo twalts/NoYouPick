@@ -1,4 +1,4 @@
-package com.hbkapps.noyoupick
+package com.hbkapps.noyoupick.genreselection
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.hbkapps.noyoupick.R
+import com.hbkapps.noyoupick.model.GenreItem
 
-class UserSelectionViewAdapter(private var genreList : ArrayList<GenreItem>, private val clickListener: (GenreItem) -> Unit)
-    : RecyclerView.Adapter<UserSelectionViewAdapter.GenreViewHolder>() {
+class GenreSelectionViewAdapter(private var genreList : ArrayList<GenreItem>, private val clickListener: (GenreItem) -> Unit)
+    : RecyclerView.Adapter<GenreSelectionViewAdapter.GenreViewHolder>() {
 
     class GenreViewHolder(private val textView: TextView) : RecyclerView.ViewHolder(textView) {
 
