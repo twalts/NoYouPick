@@ -1,4 +1,4 @@
-package com.hbkapps.noyoupick
+package com.hbkapps.noyoupick.genreselection
 
 import android.os.Bundle
 import android.widget.Toast
@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hbkapps.noyoupick.Constants
+import com.hbkapps.noyoupick.R
+import com.hbkapps.noyoupick.model.GenreItem
 import kotlinx.android.synthetic.main.activity_genre_selection.*
 
 class GenreSelectionActivity : AppCompatActivity() {
@@ -41,7 +44,7 @@ class GenreSelectionActivity : AppCompatActivity() {
     private fun setUpRecyclerView() {
         mGenreList = setUpGenreList()
         viewManager = LinearLayoutManager(this)
-        viewAdapter = UserSelectionViewAdapter(mGenreList) { genre: GenreItem ->
+        viewAdapter = GenreSelectionViewAdapter(mGenreList) { genre: GenreItem ->
             genreClicked(genre)
         }
 
@@ -60,11 +63,17 @@ class GenreSelectionActivity : AppCompatActivity() {
         }
 
         if (mSelectedGenreList.isEmpty()) {
-            btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this, R.color.unselected_submit_button_background))
-            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.unselected_submit_button_text))
+            btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.unselected_submit_button_background
+            ))
+            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this,
+                R.color.unselected_submit_button_text
+            ))
         } else {
             btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.off_black))
-            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
+            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this,
+                R.drawable.button_rectangular_filled_background
+            )
         }
     }
 
