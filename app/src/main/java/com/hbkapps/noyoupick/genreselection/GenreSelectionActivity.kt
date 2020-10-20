@@ -2,49 +2,69 @@ package com.hbkapps.noyoupick.genreselection
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.hbkapps.noyoupick.Constants
+import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
 import kotlinx.android.synthetic.main.activity_genre_selection.*
+import javax.inject.Inject
 
-class GenreSelectionActivity : AppCompatActivity() {
+class GenreSelectionActivity : BaseActivity() {
 
+    @Inject
+    lateinit var presenter : GenreSelectionPresenter
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter : RecyclerView.Adapter<*>
     private lateinit var viewManager : RecyclerView.LayoutManager
 
-    private var mGenreList : ArrayList<GenreItem> = ArrayList()
-    private var mSelectedGenreList : ArrayList<GenreItem> = ArrayList()
+    private var genreList : ArrayList<GenreItem> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_genre_selection)
-
+        application.applicationComponent.inject(this)
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            if (mSelectedGenreList.isNotEmpty()) {
-                val mediaType = when (intent.getIntExtra("MEDIA_TYPE", 0)) {
-                    Constants.MEDIA_TYPE_MOVIE -> "Movie"
-                    Constants.MEDIA_TYPE_TV -> "TV Show"
-                    Constants.MEDIA_TYPE_BOTH -> "Both"
-                    else -> "ERROR"
-                }
+            val mediaType = (intent.getIntExtra("MEDIA_TYPE", 0))
+            presenter.onSubmitButtonClicked(genreSelectionInterface, mediaType)
+        }
 
-                Toast.makeText(this, "Media type is $mediaType, list of genres is: $mSelectedGenreList", Toast.LENGTH_SHORT).show()
-            }
+    }
+
+    private val genreSelectionInterface: GenreSelectionPresenter.GenreSelectionInterface = object : GenreSelectionPresenter.GenreSelectionInterface {
+        override fun setSubmitButtonHighlighted() {
+            btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this@GenreSelectionActivity,
+                R.color.unselected_submit_button_background
+            ))
+            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this@GenreSelectionActivity,
+                R.color.unselected_submit_button_text
+            ))
+        }
+
+        override fun setSubmitButtonUnhighlighted() {
+            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this@GenreSelectionActivity, R.color.off_black))
+            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this@GenreSelectionActivity,
+                R.drawable.button_rectangular_filled_background
+            )
+        }
+
+        override fun displayInfoToastAfterSubmit(mediaTypeName : String, selectedGenres : ArrayList<GenreItem>) {
+            Toast.makeText(
+                this@GenreSelectionActivity,
+                "Media type is $mediaTypeName, list of genres is: $selectedGenres",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
     }
 
     private fun setUpRecyclerView() {
-        mGenreList = setUpGenreList()
+        genreList = setUpGenreList()
         viewManager = LinearLayoutManager(this)
-        viewAdapter = GenreSelectionViewAdapter(mGenreList) { genre: GenreItem ->
+        viewAdapter = GenreSelectionViewAdapter(genreList) { genre: GenreItem ->
             genreClicked(genre)
         }
 
@@ -56,25 +76,8 @@ class GenreSelectionActivity : AppCompatActivity() {
     }
 
     private fun genreClicked(genreItem: GenreItem) {
-        if (genreItem.isSelected) {
-            mSelectedGenreList.add(genreItem)
-        } else {
-            mSelectedGenreList.remove(genreItem)
-        }
-
-        if (mSelectedGenreList.isEmpty()) {
-            btnSubmitGenreChoice.setBackgroundColor(ContextCompat.getColor(this,
-                R.color.unselected_submit_button_background
-            ))
-            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this,
-                R.color.unselected_submit_button_text
-            ))
-        } else {
-            btnSubmitGenreChoice.setTextColor(ContextCompat.getColor(this, R.color.off_black))
-            btnSubmitGenreChoice.background = ContextCompat.getDrawable(this,
-                R.drawable.button_rectangular_filled_background
-            )
-        }
+        presenter.addOrRemoveGenreItemFromList(genreItem)
+        presenter.setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface)
     }
 
     private fun setUpGenreList() : ArrayList<GenreItem> {

@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.dagger
 
+import com.hbkapps.noyoupick.genreselection.GenreSelectionActivity
 import com.hbkapps.noyoupick.landing.LandingActivity
 import com.hbkapps.noyoupick.repository.RepositoryModule
 import dagger.Component
@@ -8,4 +9,5 @@ import dagger.Component
 @Component(modules = [ApplicationModule::class, PresenterModule::class, RepositoryModule::class])
 interface ApplicationComponent {
     fun inject(landingActivity: LandingActivity)
+    fun inject(genreSelectionActivity: GenreSelectionActivity)
 }
