@@ -31,8 +31,8 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
-    fun submitSelectionIfUserHasSelectedAGenre(genreSelectionInterface: GenreSelectionInterface,
-                                               mediaType: Int) {
+    fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface,
+                              mediaType: Int) {
         if (!selectedGenres.isNullOrEmpty()) {
             val mediaTypeName = when (mediaType) {
                 Constants.MEDIA_TYPE_MOVIE -> "Movie"

@@ -29,7 +29,7 @@ class GenreSelectionActivity : BaseActivity() {
 
         btnSubmitGenreChoice.setOnClickListener {
             val mediaType = (intent.getIntExtra("MEDIA_TYPE", 0))
-            presenter.submitSelectionIfUserHasSelectedAGenre(genreSelectionInterface, mediaType)
+            presenter.onSubmitButtonClicked(genreSelectionInterface, mediaType)
         }
 
     }
