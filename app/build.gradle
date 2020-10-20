@@ -7,10 +7,6 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
-    kapt {
-        generateStubs = true
-    }
-
     defaultConfig {
         applicationId "com.hbkapps.noyoupick"
         minSdkVersion 23
