@@ -56,18 +56,6 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return mediaType
     }
 
-    fun removeGenreItemFromList(genre : GenreItem) {
-        selectedGenreList.remove(genre)
-    }
-
-    fun addGenreItemToList(genre: GenreItem) {
-        selectedGenreList.add(genre)
-    }
-
-    fun clearSelectedGenresList() {
-        selectedGenreList.clear()
-    }
-
     fun getSelectedGenresList() : ArrayList<GenreItem> {
         return selectedGenreList
     }

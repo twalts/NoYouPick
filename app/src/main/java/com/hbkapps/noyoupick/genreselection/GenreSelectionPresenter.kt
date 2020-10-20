@@ -15,9 +15,9 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
 
     fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
         if (genreItem.isSelected) {
-            tmdbRepository.addGenreItemToList(genreItem)
+            tmdbRepository.getSelectedGenresList().add(genreItem)
         } else {
-            tmdbRepository.removeGenreItemFromList(genreItem)
+            tmdbRepository.getSelectedGenresList().remove(genreItem)
         }
     }
 
@@ -48,7 +48,7 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
     }
 
     fun clearSelectedGenresList() {
-        tmdbRepository.clearSelectedGenresList()
+        tmdbRepository.getSelectedGenresList().clear()
     }
 
     interface GenreSelectionInterface {
