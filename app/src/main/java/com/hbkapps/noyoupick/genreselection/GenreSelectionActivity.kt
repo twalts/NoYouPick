@@ -6,10 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.BaseActivity
-import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_genre_selection.*
 import javax.inject.Inject
 
@@ -21,8 +19,7 @@ class GenreSelectionActivity : BaseActivity() {
     private lateinit var viewAdapter : RecyclerView.Adapter<*>
     private lateinit var viewManager : RecyclerView.LayoutManager
 
-    private var mGenreList : ArrayList<GenreItem> = ArrayList()
-    private var mSelectedGenreList : ArrayList<GenreItem> = ArrayList()
+    private var genreList : ArrayList<GenreItem> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +28,8 @@ class GenreSelectionActivity : BaseActivity() {
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            presenter.checkIfUserCanSubmit(mSelectedGenreList, genreSelectionInterface)
+            val mediaType = (intent.getIntExtra("MEDIA_TYPE", 0))
+            presenter.submitSelectionIfUserHasSelectedAGenre(genreSelectionInterface, mediaType)
         }
 
     }
@@ -53,16 +51,10 @@ class GenreSelectionActivity : BaseActivity() {
             )
         }
 
-        override fun displayInfoToastAfterSubmit() {
-            val mediaType = when (intent.getIntExtra("MEDIA_TYPE", 0)) {
-                Constants.MEDIA_TYPE_MOVIE -> "Movie"
-                Constants.MEDIA_TYPE_TV -> "TV Show"
-                Constants.MEDIA_TYPE_BOTH -> "Both"
-                else -> "ERROR"
-            }
+        override fun displayInfoToastAfterSubmit(mediaTypeName : String, selectedGenres : ArrayList<GenreItem>) {
             Toast.makeText(
                 this@GenreSelectionActivity,
-                "Media type is $mediaType, list of genres is: $mSelectedGenreList",
+                "Media type is $mediaTypeName, list of genres is: $selectedGenres",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -70,9 +62,9 @@ class GenreSelectionActivity : BaseActivity() {
     }
 
     private fun setUpRecyclerView() {
-        mGenreList = setUpGenreList()
+        genreList = setUpGenreList()
         viewManager = LinearLayoutManager(this)
-        viewAdapter = GenreSelectionViewAdapter(mGenreList) { genre: GenreItem ->
+        viewAdapter = GenreSelectionViewAdapter(genreList) { genre: GenreItem ->
             genreClicked(genre)
         }
 
@@ -84,8 +76,8 @@ class GenreSelectionActivity : BaseActivity() {
     }
 
     private fun genreClicked(genreItem: GenreItem) {
-        mSelectedGenreList = presenter.addOrRemoveGenreItemFromList(genreItem, mSelectedGenreList)
-        presenter.setSubmitButtonHighlightedOrUnHighlighted(mSelectedGenreList, genreSelectionInterface)
+        presenter.addOrRemoveGenreItemFromList(genreItem)
+        presenter.setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface)
     }
 
     private fun setUpGenreList() : ArrayList<GenreItem> {
