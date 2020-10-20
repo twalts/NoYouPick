@@ -28,7 +28,7 @@ class GenreSelectionActivity : BaseActivity() {
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            val mediaType = (intent.getIntExtra("MEDIA_TYPE", 0))
+            val mediaType = presenter.getMediaTypeFromRepo()
             presenter.onSubmitButtonClicked(genreSelectionInterface, mediaType)
         }
 
@@ -103,5 +103,6 @@ class GenreSelectionActivity : BaseActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_out_right)
+        presenter.clearSelectedGenresList()
     }
 }

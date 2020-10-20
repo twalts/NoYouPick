@@ -13,6 +13,7 @@ import javax.inject.Inject
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
     private var moviesList: List<Movie> = ArrayList()
+    private var mediaType : Int = 0
 
     fun getMoviesList(callListener: MoviesListListener) {
         if (moviesList.isNullOrEmpty()) {
@@ -43,6 +44,14 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 }
             })
 
+    }
+
+    fun setChosenMediaType(mediaTypeSelection : Int) {
+        mediaType = mediaTypeSelection
+    }
+
+    fun getChosenMediaType() : Int {
+        return mediaType
     }
 
     interface MoviesListListener {

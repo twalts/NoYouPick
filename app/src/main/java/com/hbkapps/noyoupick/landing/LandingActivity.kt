@@ -22,7 +22,6 @@ class LandingActivity : BaseActivity() {
 
     @Inject
     lateinit var presenter: LandingPresenter
-    private var mediaType : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,56 +44,39 @@ class LandingActivity : BaseActivity() {
 
     }
 
-    private fun setUpButtons() {
-        btnNext.setOnClickListener {
-            if (mediaType != 0) {
-                val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
-                intent.putExtra("MEDIA_TYPE", mediaType)
-                startActivity(intent)
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
-            }
-        }
-
-        btnPickMovie.setOnClickListener {
-            if (mediaType != Constants.MEDIA_TYPE_MOVIE) {
-                mediaType = Constants.MEDIA_TYPE_MOVIE
-                chooseMediaTypeAndHighlightNextButton()
-            }
-        }
-
-        btnPickTelevision.setOnClickListener {
-            if (mediaType != Constants.MEDIA_TYPE_TV) {
-                mediaType = Constants.MEDIA_TYPE_TV
-                chooseMediaTypeAndHighlightNextButton()
-            }
-        }
-
-        btnPickBoth.setOnClickListener {
-            if (mediaType != Constants.MEDIA_TYPE_BOTH) {
-                mediaType = Constants.MEDIA_TYPE_BOTH
-                chooseMediaTypeAndHighlightNextButton()
-            }
+    private val landingInterface : LandingPresenter.LandingInterface = object : LandingPresenter.LandingInterface {
+        override fun startGenreSelectionActivity() {
+            val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
         }
     }
 
-    private fun chooseMediaTypeAndHighlightNextButton() {
-        when (mediaType) {
-            Constants.MEDIA_TYPE_MOVIE -> {
-                clearAllSelections()
-                setSelected(btnPickMovie)
-            }
-
-            Constants.MEDIA_TYPE_TV -> {
-                clearAllSelections()
-                setSelected(btnPickTelevision)
-            }
-
-            Constants.MEDIA_TYPE_BOTH -> {
-                clearAllSelections()
-                setSelected(btnPickBoth)
-            }
+    private fun setUpButtons() {
+        btnNext.setOnClickListener {
+            presenter.onNextButtonClicked(landingInterface)
         }
-        setSelected(btnNext)
+
+        btnPickMovie.setOnClickListener {
+            clearAllSelections()
+            setSelected(btnNext)
+            setSelected(btnPickMovie)
+            presenter.saveMediaTypeSelectionToRepo(Constants.MEDIA_TYPE_MOVIE)
+        }
+
+        btnPickTelevision.setOnClickListener {
+            clearAllSelections()
+            setSelected(btnNext)
+            setSelected(btnPickTelevision)
+            presenter.saveMediaTypeSelectionToRepo(Constants.MEDIA_TYPE_TV)
+        }
+
+        btnPickBoth.setOnClickListener {
+            clearAllSelections()
+            setSelected(btnNext)
+            setSelected(btnPickBoth)
+            presenter.saveMediaTypeSelectionToRepo(Constants.MEDIA_TYPE_BOTH)
+        }
     }
 
     private fun clearAllSelections() {

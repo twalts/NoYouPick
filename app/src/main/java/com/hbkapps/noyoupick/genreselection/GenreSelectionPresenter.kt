@@ -45,6 +45,14 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
+    fun getMediaTypeFromRepo() : Int {
+        return tmdbRepository.getChosenMediaType()
+    }
+
+    fun clearSelectedGenresList() {
+        selectedGenres.clear()
+    }
+
     interface GenreSelectionInterface {
         fun setSubmitButtonHighlighted()
         fun setSubmitButtonUnhighlighted()
