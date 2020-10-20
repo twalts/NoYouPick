@@ -7,8 +7,6 @@ import javax.inject.Inject
 
 class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: TmdbRepository) {
 
-    private var selectedGenres: ArrayList<GenreItem> = ArrayList()
-
     //  we may want to use this repo/method to replace the hardcoded names and
     //  IDs we set up in GenreSelectionActivity.setUpGenreList()
     fun loadMoviesList(callListener: TmdbRepository.MoviesListListener) {
@@ -17,14 +15,14 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
 
     fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
         if (genreItem.isSelected) {
-            selectedGenres.add(genreItem)
+            tmdbRepository.addGenreItemToList(genreItem)
         } else {
-            selectedGenres.remove(genreItem)
+            tmdbRepository.removeGenreItemFromList(genreItem)
         }
     }
 
     fun setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface: GenreSelectionInterface) {
-        if (!selectedGenres.isNullOrEmpty()) {
+        if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
             genreSelectionInterface.setSubmitButtonUnhighlighted()
         } else {
             genreSelectionInterface.setSubmitButtonHighlighted()
@@ -33,14 +31,14 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
 
     fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface,
                               mediaType: Int) {
-        if (!selectedGenres.isNullOrEmpty()) {
+        if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
             val mediaTypeName = when (mediaType) {
                 Constants.MEDIA_TYPE_MOVIE -> "Movie"
                 Constants.MEDIA_TYPE_TV -> "TV Show"
                 Constants.MEDIA_TYPE_BOTH -> "Both"
                 else -> "ERROR"
             }
-            genreSelectionInterface.displayInfoToastAfterSubmit(mediaTypeName, selectedGenres)
+            genreSelectionInterface.displayInfoToastAfterSubmit(mediaTypeName, tmdbRepository.getSelectedGenresList())
             //passing the selectedGenreList back to Activity temporarily while we still use Toast
         }
     }
@@ -50,7 +48,7 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
     }
 
     fun clearSelectedGenresList() {
-        selectedGenres.clear()
+        tmdbRepository.clearSelectedGenresList()
     }
 
     interface GenreSelectionInterface {

@@ -1,6 +1,7 @@
 package com.hbkapps.noyoupick.repository
 
 import com.hbkapps.noyoupick.dagger.ActivityScope
+import com.hbkapps.noyoupick.model.GenreItem
 import com.hbkapps.noyoupick.model.Movie
 import com.hbkapps.noyoupick.tmdbapi.GetMoviesResponse
 import com.hbkapps.noyoupick.tmdbapi.TmdbApiInterface
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
     private var moviesList: List<Movie> = ArrayList()
+    private var selectedGenreList : ArrayList<GenreItem> = ArrayList()
     private var mediaType : Int = 0
 
     fun getMoviesList(callListener: MoviesListListener) {
@@ -52,6 +54,22 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     fun getChosenMediaType() : Int {
         return mediaType
+    }
+
+    fun removeGenreItemFromList(genre : GenreItem) {
+        selectedGenreList.remove(genre)
+    }
+
+    fun addGenreItemToList(genre: GenreItem) {
+        selectedGenreList.add(genre)
+    }
+
+    fun clearSelectedGenresList() {
+        selectedGenreList.clear()
+    }
+
+    fun getSelectedGenresList() : ArrayList<GenreItem> {
+        return selectedGenreList
     }
 
     interface MoviesListListener {
