@@ -17,7 +17,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     private var selectedGenreList : ArrayList<GenreItem> = ArrayList()
     private var mediaType : Int = 0
 
-    fun getMoviesList(callListener: MoviesListListener) {
+    fun getPopularMoviesList(callListener: MoviesListListener) {
         if (moviesList.isNullOrEmpty()) {
             makeGetMoviesListCall(callListener)
         } else {
@@ -48,6 +48,38 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     }
 
+    fun getMoviesListFromSelection(callListener: MoviesListListener, selectedGenres: String) {
+        if (moviesList.isNullOrEmpty()) {
+            makeGetMoviesListFromSelectionCall(callListener, selectedGenres)
+        } else {
+            callListener.loadMoviesList(moviesList)
+        }
+    }
+
+    private fun makeGetMoviesListFromSelectionCall(callListener: MoviesListListener,
+                                                   selectedGenres : String) {
+        tmdbApiInterface.getMoviesFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
+                .enqueue(object : Callback<GetMoviesResponse> {
+                    override fun onResponse(call: Call<GetMoviesResponse>, response: Response<GetMoviesResponse>) {
+                        if (response.isSuccessful) {
+                            val responseBody = response.body()
+
+                            if (responseBody != null) {
+                                moviesList = responseBody.movies
+                                callListener.loadMoviesList(moviesList)
+                            } else {
+                                callListener.onFailure()
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                        callListener.onFailure()
+                    }
+                })
+
+    }
+
     fun setChosenMediaType(mediaTypeSelection : Int) {
         mediaType = mediaTypeSelection
     }
@@ -58,6 +90,10 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     fun getSelectedGenresList() : ArrayList<GenreItem> {
         return selectedGenreList
+    }
+
+    fun clearMoviesList() {
+        moviesList = ArrayList()
     }
 
     interface MoviesListListener {

@@ -12,4 +12,11 @@ interface TmdbApiInterface {
         @Query("page") page: Int
     ): Call<GetMoviesResponse>
 
+    @GET("discover/movie")
+    fun getMoviesFromUserSelectedGenres(
+            @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa",
+            @Query("page") page: Int,
+            @Query("with_genres") selectedGenres: String
+    ): Call<GetMoviesResponse>
+
 }

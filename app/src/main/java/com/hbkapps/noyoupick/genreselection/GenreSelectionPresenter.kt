@@ -10,7 +10,7 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
     //  we may want to use this repo/method to replace the hardcoded names and
     //  IDs we set up in GenreSelectionActivity.setUpGenreList()
     fun loadMoviesList(callListener: TmdbRepository.MoviesListListener) {
-        tmdbRepository.getMoviesList(callListener)
+        tmdbRepository.getPopularMoviesList(callListener)
     }
 
     fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
@@ -29,22 +29,16 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
-    fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface,
-                              mediaType: Int) {
+    fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface) {
         if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
-            val mediaTypeName = when (mediaType) {
+            val mediaTypeName = when (tmdbRepository.getChosenMediaType()) {
                 Constants.MEDIA_TYPE_MOVIE -> "Movie"
                 Constants.MEDIA_TYPE_TV -> "TV Show"
                 Constants.MEDIA_TYPE_BOTH -> "Both"
                 else -> "ERROR"
             }
-            genreSelectionInterface.displayInfoToastAfterSubmit(mediaTypeName, tmdbRepository.getSelectedGenresList())
-            //passing the selectedGenreList back to Activity temporarily while we still use Toast
+            genreSelectionInterface.startMovieTVDisplayActivity()
         }
-    }
-
-    fun getMediaTypeFromRepo() : Int {
-        return tmdbRepository.getChosenMediaType()
     }
 
     fun clearSelectedGenresList() {
@@ -54,7 +48,7 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
     interface GenreSelectionInterface {
         fun setSubmitButtonHighlighted()
         fun setSubmitButtonUnhighlighted()
-        fun displayInfoToastAfterSubmit(mediaTypeName : String, selectedGenres: ArrayList<GenreItem>)
+        fun startMovieTVDisplayActivity()
     }
 }
 
