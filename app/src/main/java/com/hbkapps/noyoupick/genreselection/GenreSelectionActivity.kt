@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.genreselection
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
+import com.hbkapps.noyoupick.movietvdisplay.MovieTVDisplayActivity
 import kotlinx.android.synthetic.main.activity_genre_selection.*
 import javax.inject.Inject
 
@@ -28,10 +30,8 @@ class GenreSelectionActivity : BaseActivity() {
         setUpRecyclerView()
 
         btnSubmitGenreChoice.setOnClickListener {
-            val mediaType = presenter.getMediaTypeFromRepo()
-            presenter.onSubmitButtonClicked(genreSelectionInterface, mediaType)
+            presenter.onSubmitButtonClicked(genreSelectionInterface)
         }
-
     }
 
     private val genreSelectionInterface: GenreSelectionPresenter.GenreSelectionInterface = object : GenreSelectionPresenter.GenreSelectionInterface {
@@ -51,14 +51,11 @@ class GenreSelectionActivity : BaseActivity() {
             )
         }
 
-        override fun displayInfoToastAfterSubmit(mediaTypeName : String, selectedGenres : ArrayList<GenreItem>) {
-            Toast.makeText(
-                this@GenreSelectionActivity,
-                "Media type is $mediaTypeName, list of genres is: $selectedGenres",
-                Toast.LENGTH_SHORT
-            ).show()
+        override fun startMovieTVDisplayActivity() {
+            val intent = Intent(this@GenreSelectionActivity, MovieTVDisplayActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
         }
-
     }
 
     private fun setUpRecyclerView() {
