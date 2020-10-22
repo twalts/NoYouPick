@@ -31,12 +31,6 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
 
     fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface) {
         if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
-            val mediaTypeName = when (tmdbRepository.getChosenMediaType()) {
-                Constants.MEDIA_TYPE_MOVIE -> "Movie"
-                Constants.MEDIA_TYPE_TV -> "TV Show"
-                Constants.MEDIA_TYPE_BOTH -> "Both"
-                else -> "ERROR"
-            }
             genreSelectionInterface.startMovieTVDisplayActivity()
         }
     }

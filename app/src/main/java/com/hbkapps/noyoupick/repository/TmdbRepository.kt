@@ -13,19 +13,20 @@ import javax.inject.Inject
 @ActivityScope
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
-    private var moviesList: List<Movie> = ArrayList()
+    private var popularMoviesList: List<Movie> = ArrayList()
+    private var moviesListFromSelection: List<Movie> = ArrayList()
     private var selectedGenreList : ArrayList<GenreItem> = ArrayList()
     private var mediaType : Int = 0
 
     fun getPopularMoviesList(callListener: MoviesListListener) {
-        if (moviesList.isNullOrEmpty()) {
-            makeGetMoviesListCall(callListener)
+        if (popularMoviesList.isNullOrEmpty()) {
+            makeGetPopularMoviesListCall(callListener)
         } else {
-            callListener.loadMoviesList(moviesList)
+            callListener.loadMoviesList(popularMoviesList)
         }
     }
 
-    private fun makeGetMoviesListCall(callListener: MoviesListListener) {
+    private fun makeGetPopularMoviesListCall(callListener: MoviesListListener) {
         tmdbApiInterface.getPopularMovies(page = 1)
             .enqueue(object : Callback<GetMoviesResponse> {
                 override fun onResponse(call: Call<GetMoviesResponse>, response: Response<GetMoviesResponse>) {
@@ -33,8 +34,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         val responseBody = response.body()
 
                         if (responseBody != null) {
-                            moviesList = responseBody.movies
-                            callListener.loadMoviesList(moviesList)
+                            popularMoviesList = responseBody.movies
+                            callListener.loadMoviesList(popularMoviesList)
                         } else {
                             callListener.onFailure()
                         }
@@ -49,10 +50,10 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     fun getMoviesListFromSelection(callListener: MoviesListListener, selectedGenres: String) {
-        if (moviesList.isNullOrEmpty()) {
+        if (moviesListFromSelection.isNullOrEmpty()) {
             makeGetMoviesListFromSelectionCall(callListener, selectedGenres)
         } else {
-            callListener.loadMoviesList(moviesList)
+            callListener.loadMoviesList(moviesListFromSelection)
         }
     }
 
@@ -65,8 +66,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                             val responseBody = response.body()
 
                             if (responseBody != null) {
-                                moviesList = responseBody.movies
-                                callListener.loadMoviesList(moviesList)
+                                moviesListFromSelection = responseBody.movies
+                                callListener.loadMoviesList(moviesListFromSelection)
                             } else {
                                 callListener.onFailure()
                             }
@@ -93,7 +94,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     fun clearMoviesList() {
-        moviesList = ArrayList()
+        moviesListFromSelection = ArrayList()
     }
 
     interface MoviesListListener {
