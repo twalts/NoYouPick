@@ -40,6 +40,6 @@ class MovieTVDisplayActivity : BaseActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_out_right)
-        presenter.clearMoviesList()
+        presenter.clearMoviesListFromSelection()
     }
 }

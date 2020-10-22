@@ -1,7 +1,6 @@
 package com.hbkapps.noyoupick.movietvdisplay
 
 import com.hbkapps.noyoupick.Constants
-import com.hbkapps.noyoupick.model.GenreItem
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import javax.inject.Inject
 
@@ -20,8 +19,8 @@ class MovieTVDisplayPresenter @Inject constructor(private val tmdbRepository: Tm
             }
     }
 
-    fun clearMoviesList() {
-        tmdbRepository.clearMoviesList()
+    fun clearMoviesListFromSelection() {
+        tmdbRepository.clearMoviesListFromSelection()
     }
 
     fun getMediaType() : String {

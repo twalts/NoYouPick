@@ -93,7 +93,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return selectedGenreList
     }
 
-    fun clearMoviesList() {
+    fun clearMoviesListFromSelection() {
         moviesListFromSelection = ArrayList()
     }
 
