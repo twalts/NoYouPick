@@ -1,4 +1,4 @@
-package com.hbkapps.noyoupick.movieslist
+package com.hbkapps.noyoupick.medialist
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,27 +7,26 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.R
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.movieslist.MoviesListAdapter.MovieViewHolder
+import com.hbkapps.noyoupick.model.TV
 import kotlinx.android.synthetic.main.movie_list_recycler_item.view.*
 
-class MoviesListAdapter(private val moviesList: List<Movie>) : RecyclerView.Adapter<MovieViewHolder>() {
+class TVListAdapter (private val tvList: List<TV>) : RecyclerView.Adapter<TVListAdapter.TVViewHolder>() {
 
     private var context: Context? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TVViewHolder {
         val itemView = LayoutInflater.from(context).inflate(R.layout.movie_list_recycler_item, parent, false)
-        return MovieViewHolder(itemView)
+        return TVViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = moviesList[position]
-        holder.title.text = movie.title
-        holder.overview.text = movie.overview
+    override fun onBindViewHolder(holder: TVViewHolder, position: Int) {
+        val tvShow = tvList[position]
+        holder.title.text = tvShow.name
+        holder.overview.text = tvShow.overview
     }
 
     override fun getItemCount(): Int {
-        return moviesList.size
+        return tvList.size
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -35,7 +34,7 @@ class MoviesListAdapter(private val moviesList: List<Movie>) : RecyclerView.Adap
         context = recyclerView.context
     }
 
-    class MovieViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class TVViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var title: TextView = itemView.title
         var overview: TextView = itemView.overview
     }

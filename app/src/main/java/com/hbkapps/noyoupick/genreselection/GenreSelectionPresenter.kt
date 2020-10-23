@@ -7,10 +7,12 @@ import javax.inject.Inject
 
 class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: TmdbRepository) {
 
-    //  we may want to use this repo/method to replace the hardcoded names and
-    //  IDs we set up in GenreSelectionActivity.setUpGenreList()
-    fun loadMoviesList(callListener: TmdbRepository.MoviesListListener) {
-        tmdbRepository.getPopularMoviesList(callListener)
+    fun loadGenreList(callListener: TmdbRepository.GenreListListener)  {
+        if (tmdbRepository.getChosenMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+            tmdbRepository.loadMovieGenreList(callListener)
+        } else {
+            tmdbRepository.loadTVGenreList(callListener)
+        }
     }
 
     fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
@@ -36,6 +38,9 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
     }
 
     fun clearSelectedGenresList() {
+        for (i in tmdbRepository.getSelectedGenresList()) {
+            i.isSelected = false;
+        }
         tmdbRepository.getSelectedGenresList().clear()
     }
 

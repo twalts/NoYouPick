@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
 
-class GenreSelectionViewAdapter(private var genreList : ArrayList<GenreItem>, private val clickListener: (GenreItem) -> Unit)
-    : RecyclerView.Adapter<GenreSelectionViewAdapter.GenreViewHolder>() {
+class GenreSelectionAdapter(private var genreList : List<GenreItem>, private val clickListener: (GenreItem) -> Unit)
+    : RecyclerView.Adapter<GenreSelectionAdapter.GenreViewHolder>() {
 
     class GenreViewHolder(private val textView: TextView) : RecyclerView.ViewHolder(textView) {
 

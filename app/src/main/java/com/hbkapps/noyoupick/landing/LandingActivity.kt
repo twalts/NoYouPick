@@ -9,11 +9,7 @@ import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.genreselection.GenreSelectionActivity
 import com.hbkapps.noyoupick.R
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.movieslist.MoviesListAdapter
-import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_landing.*
-import kotlinx.android.synthetic.main.activity_landing.btnPickBoth
 import kotlinx.android.synthetic.main.activity_landing.btnPickMovie
 import kotlinx.android.synthetic.main.activity_landing.btnPickTelevision
 import javax.inject.Inject
@@ -28,20 +24,8 @@ class LandingActivity : BaseActivity() {
         setContentView(R.layout.activity_landing)
 
         application.applicationComponent.inject(this)
-        moviesList.setOnClickListener { presenter.loadMoviesList(moviesListListener) }
 
         setUpButtons()
-    }
-
-    private val moviesListListener: TmdbRepository.MoviesListListener = object : TmdbRepository.MoviesListListener {
-        override fun loadMoviesList(moviesList: List<Movie>) {
-            moviesListRv.adapter = MoviesListAdapter(moviesList)
-        }
-
-        override fun onFailure() {
-            //todo
-        }
-
     }
 
     private val landingInterface : LandingPresenter.LandingInterface = object : LandingPresenter.LandingInterface {
@@ -70,13 +54,6 @@ class LandingActivity : BaseActivity() {
             setSelected(btnPickTelevision)
             presenter.saveMediaTypeSelectionToRepo(Constants.MEDIA_TYPE_TV)
         }
-
-        btnPickBoth.setOnClickListener {
-            clearAllSelections()
-            setSelected(btnNext)
-            setSelected(btnPickBoth)
-            presenter.saveMediaTypeSelectionToRepo(Constants.MEDIA_TYPE_BOTH)
-        }
     }
 
     private fun clearAllSelections() {
@@ -88,14 +65,6 @@ class LandingActivity : BaseActivity() {
             this.setTypeface(null, Typeface.NORMAL)
         }
         btnPickTelevision.apply {
-            this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
-            this.background = ContextCompat.getDrawable(this@LandingActivity,
-                R.drawable.button_rectangular_stroke_background
-            )
-            this.setTypeface(null, Typeface.NORMAL)
-        }
-
-        btnPickBoth.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
             this.background = ContextCompat.getDrawable(this@LandingActivity,
                 R.drawable.button_rectangular_stroke_background

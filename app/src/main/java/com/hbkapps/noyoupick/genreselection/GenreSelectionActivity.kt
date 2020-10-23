@@ -2,14 +2,14 @@ package com.hbkapps.noyoupick.genreselection
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.movietvdisplay.MovieTVDisplayActivity
+import com.hbkapps.noyoupick.medialist.MediaListActivity
+import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_genre_selection.*
 import javax.inject.Inject
 
@@ -27,10 +27,25 @@ class GenreSelectionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_genre_selection)
         application.applicationComponent.inject(this)
-        setUpRecyclerView()
+
+        presenter.loadGenreList(genreListListener)
 
         btnSubmitGenreChoice.setOnClickListener {
             presenter.onSubmitButtonClicked(genreSelectionInterface)
+        }
+    }
+
+    private val genreListListener : TmdbRepository.GenreListListener = object :TmdbRepository.GenreListListener {
+        override fun loadMovieGenres(movieGenreList: List<GenreItem>) {
+            setUpRecyclerView(movieGenreList)
+        }
+
+        override fun loadTVGenres(tvGenreList: List<GenreItem>) {
+            setUpRecyclerView(tvGenreList)
+        }
+
+        override fun onFailure() {
+            //todo
         }
     }
 
@@ -52,16 +67,15 @@ class GenreSelectionActivity : BaseActivity() {
         }
 
         override fun startMovieTVDisplayActivity() {
-            val intent = Intent(this@GenreSelectionActivity, MovieTVDisplayActivity::class.java)
+            val intent = Intent(this@GenreSelectionActivity, MediaListActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
         }
     }
 
-    private fun setUpRecyclerView() {
-        genreList = setUpGenreList()
+    private fun setUpRecyclerView(genreList : List<GenreItem>) {
         viewManager = LinearLayoutManager(this)
-        viewAdapter = GenreSelectionViewAdapter(genreList) { genre: GenreItem ->
+        viewAdapter = GenreSelectionAdapter(genreList) { genre: GenreItem ->
             genreClicked(genre)
         }
 
