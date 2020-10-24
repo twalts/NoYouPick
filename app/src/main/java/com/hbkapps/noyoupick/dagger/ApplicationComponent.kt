@@ -2,7 +2,7 @@ package com.hbkapps.noyoupick.dagger
 
 import com.hbkapps.noyoupick.genreselection.GenreSelectionActivity
 import com.hbkapps.noyoupick.landing.LandingActivity
-import com.hbkapps.noyoupick.medialist.MediaListActivity
+import com.hbkapps.noyoupick.movietvlist.MovieTVListActivity
 import com.hbkapps.noyoupick.repository.RepositoryModule
 import dagger.Component
 
@@ -11,5 +11,5 @@ import dagger.Component
 interface ApplicationComponent {
     fun inject(landingActivity: LandingActivity)
     fun inject(genreSelectionActivity: GenreSelectionActivity)
-    fun inject(mediaListActivity: MediaListActivity)
+    fun inject(movieTVListActivity: MovieTVListActivity)
 }

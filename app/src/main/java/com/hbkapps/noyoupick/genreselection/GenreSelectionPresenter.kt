@@ -7,7 +7,9 @@ import javax.inject.Inject
 
 class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: TmdbRepository) {
 
-    fun loadGenreList(callListener: TmdbRepository.GenreListListener)  {
+    private var selectedGenreList: ArrayList<GenreItem> = ArrayList()
+
+    fun loadGenreList(callListener: TmdbRepository.GenreListListener) {
         if (tmdbRepository.getChosenMediaType() == Constants.MEDIA_TYPE_MOVIE) {
             tmdbRepository.loadMovieGenreList(callListener)
         } else {
@@ -15,39 +17,55 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
-    fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
-        if (genreItem.isSelected) {
-            tmdbRepository.getSelectedGenresList().add(genreItem)
-        } else {
-            tmdbRepository.getSelectedGenresList().remove(genreItem)
+    fun loadTVOrMoviesList(callListener: TmdbRepository.MoviesListListener) {
+        if (!selectedGenreList.isNullOrEmpty()) {
+            if (tmdbRepository.getChosenMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+                tmdbRepository.loadMoviesListFromSelection(callListener, parseGenreSelection())
+            } else {
+                tmdbRepository.loadTVListFromSelection(callListener, parseGenreSelection())
+            }
         }
     }
 
+    private fun parseGenreSelection() : String {
+        return selectedGenreList
+                .joinToString(separator = "|") {
+                    "${it.id}"
+                }
+    }
+
+    fun addOrRemoveGenreItemFromList(genreItem: GenreItem) {
+        if (selectedGenreList.contains(genreItem)) {
+            selectedGenreList.remove(genreItem)
+        } else {
+            selectedGenreList.add(genreItem)
+        }
+    }
+
+    fun checkIfGenreIsSelected(genreItem: GenreItem): Boolean {
+        return selectedGenreList.contains(genreItem)
+    }
+
     fun setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface: GenreSelectionInterface) {
-        if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
+        if (!selectedGenreList.isNullOrEmpty()) {
             genreSelectionInterface.setSubmitButtonUnhighlighted()
         } else {
             genreSelectionInterface.setSubmitButtonHighlighted()
         }
     }
 
-    fun onSubmitButtonClicked(genreSelectionInterface: GenreSelectionInterface) {
-        if (!tmdbRepository.getSelectedGenresList().isNullOrEmpty()) {
-            genreSelectionInterface.startMovieTVDisplayActivity()
-        }
+    fun clearSelectedGenresList() {
+        selectedGenreList.clear()
     }
 
-    fun clearSelectedGenresList() {
-        for (i in tmdbRepository.getSelectedGenresList()) {
-            i.isSelected = false;
-        }
-        tmdbRepository.getSelectedGenresList().clear()
+    fun getSelectedGenresList(): List<GenreItem> {
+        return selectedGenreList
     }
 
     interface GenreSelectionInterface {
         fun setSubmitButtonHighlighted()
         fun setSubmitButtonUnhighlighted()
-        fun startMovieTVDisplayActivity()
+        fun getSelectedGenres(): List<GenreItem>
     }
 }
 

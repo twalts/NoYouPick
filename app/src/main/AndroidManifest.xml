@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NoYouPick">
-        <activity android:name=".medialist.MediaListActivity" />
+        <activity android:name=".movietvlist.MovieTVListActivity" />
         <activity
             android:name=".landing.LandingActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

@@ -19,8 +19,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     private var movieListFromSelection: List<Movie> = ArrayList()
     private var tvListFromSelection: List<TV> = ArrayList()
-    private var selectedGenreList : ArrayList<GenreItem> = ArrayList()
     private var mediaType : Int = 0
+    private lateinit var selectedGenres : String
 
     fun loadPopularMoviesList(callListener: MoviesListListener) {
         if (popularMoviesList.isNullOrEmpty()) {
@@ -71,6 +71,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                             if (responseBody != null) {
                                 movieListFromSelection = responseBody.movies
                                 callListener.loadMovieList(movieListFromSelection)
+                                callListener.startMovieTVListActivity()
                             } else {
                                 callListener.onFailure()
                             }
@@ -102,6 +103,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                             if (responseBody != null) {
                                 tvListFromSelection = responseBody.movies
                                 callListener.loadTVList(tvListFromSelection)
+                                callListener.startMovieTVListActivity()
                             } else {
                                 callListener.onFailure()
                             }
@@ -118,7 +120,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         if (movieGenreList.isNullOrEmpty()) {
             makeLoadMovieGenreListCall(callListener)
         } else {
-            callListener.loadMovieGenres(movieGenreList)
+            callListener.loadGenreList(movieGenreList)
         }
     }
 
@@ -131,7 +133,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
                             if (responseBody != null) {
                                 movieGenreList = responseBody.genres
-                                callListener.loadMovieGenres(movieGenreList)
+                                callListener.loadGenreList(movieGenreList)
                             } else {
                                 callListener.onFailure()
                             }
@@ -149,7 +151,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         if (tvGenreList.isNullOrEmpty()) {
             makeLoadTVGenreListCall(callListener)
         } else {
-            callListener.loadTVGenres(tvGenreList)
+            callListener.loadGenreList(tvGenreList)
         }
     }
 
@@ -162,7 +164,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
                             if (responseBody != null) {
                                 tvGenreList = responseBody.genres
-                                callListener.loadTVGenres(tvGenreList)
+                                callListener.loadGenreList(tvGenreList)
                             } else {
                                 callListener.onFailure()
                             }
@@ -185,16 +187,12 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return mediaType
     }
 
-    fun getSelectedGenresList() : ArrayList<GenreItem> {
-        return selectedGenreList
+    fun getMoviesListFromSelection() : List<Movie> {
+        return movieListFromSelection
     }
 
-    fun getMovieGenreList() : List<GenreItem> {
-        return movieGenreList
-    }
-
-    fun getTVGenreList() : List<GenreItem> {
-        return tvGenreList
+    fun getTvListFromSelection() : List<TV> {
+        return tvListFromSelection
     }
 
     fun clearMoviesListFromSelection() {
@@ -206,11 +204,12 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         fun loadMovieList(movieList: List<Movie>)
         fun loadTVList(tvList : List<TV>)
         fun onFailure()
+        fun startMovieTVListActivity()
     }
 
     interface GenreListListener {
-        fun loadMovieGenres(movieGenreList : List<GenreItem>)
-        fun loadTVGenres(tvGenreList : List<GenreItem>)
+        fun loadGenreList(genreList : List<GenreItem>)
+        fun checkIfGenreIsSelected(genreItem: GenreItem)
         fun onFailure()
     }
 }

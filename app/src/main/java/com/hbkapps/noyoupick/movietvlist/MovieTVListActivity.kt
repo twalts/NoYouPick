@@ -1,7 +1,6 @@
-package com.hbkapps.noyoupick.medialist
+package com.hbkapps.noyoupick.movietvlist
 
 import android.os.Bundle
-import android.widget.Toast
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Movie
@@ -10,36 +9,35 @@ import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_movie_tv_display.*
 import javax.inject.Inject
 
-class MediaListActivity : BaseActivity() {
+class MovieTVListActivity : BaseActivity() {
 
     @Inject
-    lateinit var presenter : MediaListPresenter
+    lateinit var presenter : MovieTVListPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_tv_display)
         application.applicationComponent.inject(this)
-        presenter.loadTVOrMoviesList(moviesListListener)
-
-        Toast.makeText(this,
-            "Media type is ${presenter.getMediaType()} " +
-                    "and selected genre IDs are ${presenter.parseGenreSelection()}",
-            Toast.LENGTH_SHORT).show()
+        presenter.getTVOrMovieListFromRepo(moviesListListener)
     }
 
-    private val moviesListListener: TmdbRepository.MoviesListListener = object : TmdbRepository.MoviesListListener {
-
+    private val moviesListListener : TmdbRepository.MoviesListListener = object : TmdbRepository.MoviesListListener {
         override fun loadMovieList(movieList: List<Movie>) {
-            userSelectedMediaRv.adapter = MoviesListAdapter(movieList)
+            val emptyTvList = listOf<TV>()
+            userSelectedMediaRv.adapter = MovieTVListAdapter(movieList, emptyTvList)
         }
 
         override fun loadTVList(tvList: List<TV>) {
-            userSelectedMediaRv.adapter = TVListAdapter(tvList)
+            val emptyMovieList = listOf<Movie>()
+            userSelectedMediaRv.adapter = MovieTVListAdapter(emptyMovieList, tvList)
         }
 
         override fun onFailure() {
             //todo
         }
+
+        override fun startMovieTVListActivity() {}
+
     }
 
     override fun onBackPressed() {

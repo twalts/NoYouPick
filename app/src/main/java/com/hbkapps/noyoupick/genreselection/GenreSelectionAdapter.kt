@@ -9,35 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
 
-class GenreSelectionAdapter(private var genreList : List<GenreItem>, private val clickListener: (GenreItem) -> Unit)
+class GenreSelectionAdapter(private var genreList : List<GenreItem>, val selectionListener : GenreSelectionPresenter.GenreSelectionInterface, private val clickListener: (GenreItem) -> Unit)
     : RecyclerView.Adapter<GenreSelectionAdapter.GenreViewHolder>() {
 
-    class GenreViewHolder(private val textView: TextView) : RecyclerView.ViewHolder(textView) {
-
-        fun bind(genre: GenreItem, clickListener: (GenreItem) -> Unit, curPosition: Int) {
-            textView.text = genre.genreName
-            textView.setOnClickListener {
-                genre.isSelected = !genre.isSelected
-                clickListener(genre)
-                checkSelected(genre,curPosition)
-            }
-            checkSelected(genre, curPosition)
-        }
-
-        private fun checkSelected(genre: GenreItem, curPosition: Int) {
-            if (adapterPosition == curPosition) {
-                if (genre.isSelected) {
-                    textView.setTextColor(Color.parseColor("#151515"))
-                    textView.setBackgroundResource(R.drawable.button_rectangular_filled_background)
-                    textView.setTypeface(null, Typeface.BOLD)
-                } else {
-                    textView.setTextColor(Color.parseColor("#ffffff"))
-                    textView.setBackgroundResource(R.drawable.button_rectangular_stroke_background)
-                    textView.setTypeface(null, Typeface.NORMAL)
-                }
-            }
-        }
-    }
+    class GenreViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
         val textView = LayoutInflater.from(parent.context)
@@ -47,7 +22,26 @@ class GenreSelectionAdapter(private var genreList : List<GenreItem>, private val
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-        holder.bind(genreList[position], clickListener, position)
+        holder.textView.text = genreList[position].genreName
+        holder.textView.setOnClickListener {
+            clickListener(genreList[position])
+            checkSelected(position, holder)
+        }
+        checkSelected(position, holder)
+    }
+
+    private fun checkSelected(position: Int, holder: GenreViewHolder) {
+        if (holder.adapterPosition == position) {
+            if (selectionListener.getSelectedGenres().contains(genreList[position])) {
+                holder.textView.setTextColor(Color.parseColor("#151515"))
+                holder.textView.setBackgroundResource(R.drawable.button_rectangular_filled_background)
+                holder.textView.setTypeface(null, Typeface.BOLD)
+            } else {
+                holder.textView.setTextColor(Color.parseColor("#ffffff"))
+                holder.textView.setBackgroundResource(R.drawable.button_rectangular_stroke_background)
+                holder.textView.setTypeface(null, Typeface.NORMAL)
+            }
+        }
     }
 
     override fun getItemCount() = genreList.size

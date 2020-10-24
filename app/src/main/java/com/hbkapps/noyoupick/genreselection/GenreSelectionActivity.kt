@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.medialist.MediaListActivity
+import com.hbkapps.noyoupick.movietvlist.MovieTVListActivity
+import com.hbkapps.noyoupick.model.Movie
+import com.hbkapps.noyoupick.model.TV
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_genre_selection.*
 import javax.inject.Inject
@@ -21,8 +23,6 @@ class GenreSelectionActivity : BaseActivity() {
     private lateinit var viewAdapter : RecyclerView.Adapter<*>
     private lateinit var viewManager : RecyclerView.LayoutManager
 
-    private var genreList : ArrayList<GenreItem> = ArrayList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_genre_selection)
@@ -31,17 +31,33 @@ class GenreSelectionActivity : BaseActivity() {
         presenter.loadGenreList(genreListListener)
 
         btnSubmitGenreChoice.setOnClickListener {
-            presenter.onSubmitButtonClicked(genreSelectionInterface)
+            presenter.loadTVOrMoviesList(moviesListListener)
         }
     }
 
-    private val genreListListener : TmdbRepository.GenreListListener = object :TmdbRepository.GenreListListener {
-        override fun loadMovieGenres(movieGenreList: List<GenreItem>) {
-            setUpRecyclerView(movieGenreList)
+    private val moviesListListener : TmdbRepository.MoviesListListener = object : TmdbRepository.MoviesListListener {
+        override fun loadMovieList(movieList: List<Movie>) {}
+
+        override fun loadTVList(tvList: List<TV>) {}
+
+        override fun onFailure() {
+            //todo
         }
 
-        override fun loadTVGenres(tvGenreList: List<GenreItem>) {
-            setUpRecyclerView(tvGenreList)
+        override fun startMovieTVListActivity() {
+            val intent = Intent(this@GenreSelectionActivity, MovieTVListActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+        }
+    }
+
+    private val genreListListener : TmdbRepository.GenreListListener = object : TmdbRepository.GenreListListener {
+        override fun loadGenreList(genreList: List<GenreItem>) {
+            setUpRecyclerView(genreList)
+        }
+
+        override fun checkIfGenreIsSelected(genreItem: GenreItem) {
+            presenter.checkIfGenreIsSelected(genreItem)
         }
 
         override fun onFailure() {
@@ -66,16 +82,15 @@ class GenreSelectionActivity : BaseActivity() {
             )
         }
 
-        override fun startMovieTVDisplayActivity() {
-            val intent = Intent(this@GenreSelectionActivity, MediaListActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+
+        override fun getSelectedGenres(): List<GenreItem> {
+            return presenter.getSelectedGenresList()
         }
     }
 
     private fun setUpRecyclerView(genreList : List<GenreItem>) {
         viewManager = LinearLayoutManager(this)
-        viewAdapter = GenreSelectionAdapter(genreList) { genre: GenreItem ->
+        viewAdapter = GenreSelectionAdapter(genreList, genreSelectionInterface) { genre: GenreItem ->
             genreClicked(genre)
         }
 
@@ -89,26 +104,6 @@ class GenreSelectionActivity : BaseActivity() {
     private fun genreClicked(genreItem: GenreItem) {
         presenter.addOrRemoveGenreItemFromList(genreItem)
         presenter.setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface)
-    }
-
-    private fun setUpGenreList() : ArrayList<GenreItem> {
-        val genreList = ArrayList<GenreItem>()
-        genreList.add(GenreItem(10759, "Action & Adventure", false))
-        genreList.add(GenreItem(16, "Animation", false))
-        genreList.add(GenreItem(35, "Comedy", false))
-        genreList.add(GenreItem(80, "Crime", false))
-        genreList.add(GenreItem(99, "Documentary", false))
-        genreList.add(GenreItem(18, "Drama", false))
-        genreList.add(GenreItem(10751, "Family", false))
-        genreList.add(GenreItem(10762, "Kids", false))
-        genreList.add(GenreItem(9648, "Mystery", false))
-        genreList.add(GenreItem(10763, "News", false))
-        genreList.add(GenreItem(10764, "Reality", false))
-        genreList.add(GenreItem(10765, "Sci-fi and Fantasy", false))
-        genreList.add(GenreItem(10768, "War & Politics", false))
-        genreList.add(GenreItem(37, "Western", false))
-
-        return genreList
     }
 
     override fun onBackPressed() {
