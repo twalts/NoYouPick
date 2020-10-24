@@ -1,4 +1,10 @@
 package com.hbkapps.noyoupick.model
 
-data class GenreItem(val id : Int, val genreName : String, var isSelected : Boolean) {
-}
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class GenreItem(
+        @Json(name="id") val id: Long,
+        @Json(name="name") val genreName: String
+)
