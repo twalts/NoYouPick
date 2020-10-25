@@ -9,6 +9,7 @@ import com.hbkapps.noyoupick.tmdbapi.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 @ActivityScope
@@ -61,6 +62,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 .getTVFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
                 .enqueue(object : Callback<GetTVFromSelectionResponse> {
                     override fun onResponse(call: Call<GetTVFromSelectionResponse>, response: Response<GetTVFromSelectionResponse>) {
+                        Timber.d("tmdb:  %s", response)
                         val responseBody = response.body()
                         if (response.isSuccessful && responseBody != null) {
                             tvListFromSelection = responseBody.movies
@@ -71,6 +73,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                     }
 
                     override fun onFailure(call: Call<GetTVFromSelectionResponse>, t: Throwable) {
+                        Timber.d(t, "tmdb: %s", t.message)
                         callListener.onFailure()
                     }
                 })
