@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.repository
 
+import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.dagger.ActivityScope
 import com.hbkapps.noyoupick.model.GenreItem
 import com.hbkapps.noyoupick.model.Movie
@@ -13,68 +14,31 @@ import javax.inject.Inject
 @ActivityScope
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
-    private var popularMoviesList: List<Movie> = ArrayList()
-    private var tvGenreList : List<GenreItem> = ArrayList()
-    private var movieGenreList : List<GenreItem> = ArrayList()
+    private var genreList: List<GenreItem> = ArrayList()
 
     private var movieListFromSelection: List<Movie> = ArrayList()
     private var tvListFromSelection: List<TV> = ArrayList()
     private var mediaType : Int = 0
-    private lateinit var selectedGenres : String
 
-    fun loadPopularMoviesList(callListener: MoviesListListener) {
-        if (popularMoviesList.isNullOrEmpty()) {
-            makeLoadPopularMoviesListCall(callListener)
-        } else {
-            callListener.loadMovieList(popularMoviesList)
-        }
-    }
-
-    private fun makeLoadPopularMoviesListCall(callListener: MoviesListListener) {
-        tmdbApiInterface.getPopularMovies(page = 1)
-            .enqueue(object : Callback<GetPopularMoviesResponse> {
-                override fun onResponse(call: Call<GetPopularMoviesResponse>, response: Response<GetPopularMoviesResponse>) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-
-                        if (responseBody != null) {
-                            popularMoviesList = responseBody.movies
-                            callListener.loadMovieList(popularMoviesList)
-                        } else {
-                            callListener.onFailure()
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<GetPopularMoviesResponse>, t: Throwable) {
-                    callListener.onFailure()
-                }
-            })
-    }
-
-    fun loadMoviesListFromSelection(callListener: MoviesListListener, selectedGenres: String) {
+    fun loadMoviesListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
         if (movieListFromSelection.isNullOrEmpty()) {
             makeLoadMoviesListFromSelectionCall(callListener, selectedGenres)
         } else {
-            callListener.loadMovieList(movieListFromSelection)
+            callListener.onMovieListLoaded(movieListFromSelection)
         }
     }
 
-    private fun makeLoadMoviesListFromSelectionCall(callListener: MoviesListListener,
-                                                    selectedGenres : String) {
-        tmdbApiInterface.getMoviesFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
+    private fun makeLoadMoviesListFromSelectionCall(callListener: LoadMediaListener, selectedGenres: String) {
+        tmdbApiInterface
+                .getMoviesFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
                 .enqueue(object : Callback<GetMoviesFromSelectionResponse> {
                     override fun onResponse(call: Call<GetMoviesFromSelectionResponse>, response: Response<GetMoviesFromSelectionResponse>) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-
-                            if (responseBody != null) {
-                                movieListFromSelection = responseBody.movies
-                                callListener.loadMovieList(movieListFromSelection)
-                                callListener.startMovieTVListActivity()
-                            } else {
-                                callListener.onFailure()
-                            }
+                        val responseBody = response.body()
+                        if (response.isSuccessful && responseBody != null) {
+                            movieListFromSelection = responseBody.movies
+                            callListener.onMovieListLoaded(movieListFromSelection)
+                        } else {
+                            callListener.onFailure()
                         }
                     }
 
@@ -84,29 +48,25 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
-    fun loadTVListFromSelection(callListener: MoviesListListener, selectedGenres: String) {
+    fun loadTVListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
         if (tvListFromSelection.isNullOrEmpty()) {
             makeLoadTVListFromSelectionCall(callListener, selectedGenres)
         } else {
-            callListener.loadTVList(tvListFromSelection)
+            callListener.onTvListLoaded(tvListFromSelection)
         }
     }
 
-    private fun makeLoadTVListFromSelectionCall(callListener: MoviesListListener,
-                                                    selectedGenres : String) {
-        tmdbApiInterface.getTVFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
+    private fun makeLoadTVListFromSelectionCall(callListener: LoadMediaListener, selectedGenres : String) {
+        tmdbApiInterface
+                .getTVFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
                 .enqueue(object : Callback<GetTVFromSelectionResponse> {
                     override fun onResponse(call: Call<GetTVFromSelectionResponse>, response: Response<GetTVFromSelectionResponse>) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-
-                            if (responseBody != null) {
-                                tvListFromSelection = responseBody.movies
-                                callListener.loadTVList(tvListFromSelection)
-                                callListener.startMovieTVListActivity()
-                            } else {
-                                callListener.onFailure()
-                            }
+                        val responseBody = response.body()
+                        if (response.isSuccessful && responseBody != null) {
+                            tvListFromSelection = responseBody.movies
+                            callListener.onTvListLoaded(tvListFromSelection)
+                        } else {
+                            callListener.onFailure()
                         }
                     }
 
@@ -116,82 +76,79 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
-    fun loadMovieGenreList(callListener: GenreListListener) {
-        if (movieGenreList.isNullOrEmpty()) {
-            makeLoadMovieGenreListCall(callListener)
+    fun loadGenreList(genreListListener: GenreListListener) {
+        if (genreList.isNullOrEmpty()) {
+            if (mediaType == Constants.MEDIA_TYPE_MOVIE) {
+                makeLoadMovieGenreListCall(genreListListener)
+            } else {
+                makeLoadTVGenreListCall(genreListListener)
+            }
         } else {
-            callListener.loadGenreList(movieGenreList)
+            genreListListener.onGenreListLoaded(genreList)
         }
     }
 
     private fun makeLoadMovieGenreListCall(callListener: GenreListListener) {
-        tmdbApiInterface.getListOfMovieGenres()
+        tmdbApiInterface
+                .getListOfMovieGenres()
                 .enqueue(object : Callback<GetGenresResponse> {
                     override fun onResponse(call: Call<GetGenresResponse>, response: Response<GetGenresResponse>) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-
-                            if (responseBody != null) {
-                                movieGenreList = responseBody.genres
-                                callListener.loadGenreList(movieGenreList)
-                            } else {
-                                callListener.onFailure()
-                            }
+                        val responseBody = response.body()
+                        if (response.isSuccessful && responseBody != null) {
+                            genreList = responseBody.genres
+                            callListener.onGenreListLoaded(genreList)
+                        } else {
+                            callListener.onFailure()
                         }
                     }
 
                     override fun onFailure(call: Call<GetGenresResponse>, t: Throwable) {
                         callListener.onFailure()
                     }
-
                 })
-    }
-
-    fun loadTVGenreList(callListener: GenreListListener) {
-        if (tvGenreList.isNullOrEmpty()) {
-            makeLoadTVGenreListCall(callListener)
-        } else {
-            callListener.loadGenreList(tvGenreList)
-        }
     }
 
     private fun makeLoadTVGenreListCall(callListener: GenreListListener) {
-        tmdbApiInterface.getListOfTVGenres()
+        tmdbApiInterface
+                .getListOfTVGenres()
                 .enqueue(object : Callback<GetGenresResponse> {
                     override fun onResponse(call: Call<GetGenresResponse>, response: Response<GetGenresResponse>) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-
-                            if (responseBody != null) {
-                                tvGenreList = responseBody.genres
-                                callListener.loadGenreList(tvGenreList)
-                            } else {
-                                callListener.onFailure()
-                            }
+                        val responseBody = response.body()
+                        if (response.isSuccessful && responseBody != null) {
+                            genreList = responseBody.genres
+                            callListener.onGenreListLoaded(genreList)
+                        } else {
+                            callListener.onFailure()
                         }
                     }
 
                     override fun onFailure(call: Call<GetGenresResponse>, t: Throwable) {
                         callListener.onFailure()
                     }
-
                 })
-
     }
 
-    fun setChosenMediaType(mediaTypeSelection : Int) {
+    fun getGenreList(): List<GenreItem> {
+        return genreList
+    }
+
+    fun clearGenreList() {
+        (genreList as ArrayList).clear()
+    }
+
+    fun setChosenMediaType(mediaTypeSelection: Int) {
         mediaType = mediaTypeSelection
     }
 
-    fun getChosenMediaType() : Int {
+    fun getChosenMediaType(): Int {
         return mediaType
     }
 
-    fun getMoviesListFromSelection() : List<Movie> {
+    fun getMoviesListFromSelection(): List<Movie> {
         return movieListFromSelection
     }
 
-    fun getTvListFromSelection() : List<TV> {
+    fun getTvListFromSelection(): List<TV> {
         return tvListFromSelection
     }
 
@@ -200,16 +157,14 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         tvListFromSelection = ArrayList()
     }
 
-    interface MoviesListListener {
-        fun loadMovieList(movieList: List<Movie>)
-        fun loadTVList(tvList : List<TV>)
+    interface LoadMediaListener {
+        fun onMovieListLoaded(movieList: List<Movie>)
+        fun onTvListLoaded(tvList : List<TV>)
         fun onFailure()
-        fun startMovieTVListActivity()
     }
 
     interface GenreListListener {
-        fun loadGenreList(genreList : List<GenreItem>)
-        fun checkIfGenreIsSelected(genreItem: GenreItem)
+        fun onGenreListLoaded(genreList: List<GenreItem>)
         fun onFailure()
     }
 }
