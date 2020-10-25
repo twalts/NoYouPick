@@ -9,15 +9,11 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
 
     private var selectedGenreList: ArrayList<GenreItem> = ArrayList()
 
-    fun loadGenreList(callListener: TmdbRepository.GenreListListener) {
-        if (tmdbRepository.getChosenMediaType() == Constants.MEDIA_TYPE_MOVIE) {
-            tmdbRepository.loadMovieGenreList(callListener)
-        } else {
-            tmdbRepository.loadTVGenreList(callListener)
-        }
+    fun getGenreList(): List<GenreItem> {
+        return tmdbRepository.getGenreList()
     }
 
-    fun loadTVOrMoviesList(callListener: TmdbRepository.MoviesListListener) {
+    fun onSubmitBtnClicked(callListener: TmdbRepository.LoadMediaListener) {
         if (!selectedGenreList.isNullOrEmpty()) {
             if (tmdbRepository.getChosenMediaType() == Constants.MEDIA_TYPE_MOVIE) {
                 tmdbRepository.loadMoviesListFromSelection(callListener, parseGenreSelection())
@@ -42,10 +38,6 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
-    fun checkIfGenreIsSelected(genreItem: GenreItem): Boolean {
-        return selectedGenreList.contains(genreItem)
-    }
-
     fun setSubmitButtonHighlightedOrUnHighlighted(genreSelectionInterface: GenreSelectionInterface) {
         if (!selectedGenreList.isNullOrEmpty()) {
             genreSelectionInterface.setSubmitButtonUnhighlighted()
@@ -54,7 +46,8 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         }
     }
 
-    fun clearSelectedGenresList() {
+    fun clearGenresList() {
+        tmdbRepository.clearGenreList()
         selectedGenreList.clear()
     }
 

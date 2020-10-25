@@ -9,15 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
 
-class GenreSelectionAdapter(private var genreList : List<GenreItem>, val selectionListener : GenreSelectionPresenter.GenreSelectionInterface, private val clickListener: (GenreItem) -> Unit)
-    : RecyclerView.Adapter<GenreSelectionAdapter.GenreViewHolder>() {
+class GenreSelectionAdapter(private var genreList : List<GenreItem>,
+                            private val selectionListener : GenreSelectionPresenter.GenreSelectionInterface,
+                            private val clickListener: (GenreItem) -> Unit): RecyclerView.Adapter<GenreSelectionAdapter.GenreViewHolder>() {
 
     class GenreViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        val textView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.user_selection_button_row, parent, false) as TextView
-
+        val textView = LayoutInflater.from(parent.context).inflate(R.layout.user_selection_button_row, parent, false) as TextView
         return GenreViewHolder(textView)
     }
 

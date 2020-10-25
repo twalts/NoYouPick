@@ -9,6 +9,8 @@ import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.genreselection.GenreSelectionActivity
 import com.hbkapps.noyoupick.R
+import com.hbkapps.noyoupick.model.GenreItem
+import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_landing.*
 import kotlinx.android.synthetic.main.activity_landing.btnPickMovie
 import kotlinx.android.synthetic.main.activity_landing.btnPickTelevision
@@ -22,23 +24,25 @@ class LandingActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing)
-
         application.applicationComponent.inject(this)
-
         setUpButtons()
     }
 
-    private val landingInterface : LandingPresenter.LandingInterface = object : LandingPresenter.LandingInterface {
-        override fun startGenreSelectionActivity() {
+    private val genreListListener : TmdbRepository.GenreListListener = object : TmdbRepository.GenreListListener {
+        override fun onGenreListLoaded(genreList: List<GenreItem>) {
             val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+        }
+
+        override fun onFailure() {
+            //todo
         }
     }
 
     private fun setUpButtons() {
         btnNext.setOnClickListener {
-            presenter.onNextButtonClicked(landingInterface)
+            presenter.onNextButtonClicked(genreListListener)
         }
 
         btnPickMovie.setOnClickListener {
@@ -59,25 +63,19 @@ class LandingActivity : BaseActivity() {
     private fun clearAllSelections() {
         btnPickMovie.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
-            this.background = ContextCompat.getDrawable(this@LandingActivity,
-                R.drawable.button_rectangular_stroke_background
-            )
+            this.background = ContextCompat.getDrawable(this@LandingActivity, R.drawable.button_rectangular_stroke_background)
             this.setTypeface(null, Typeface.NORMAL)
         }
         btnPickTelevision.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
-            this.background = ContextCompat.getDrawable(this@LandingActivity,
-                R.drawable.button_rectangular_stroke_background
-            )
+            this.background = ContextCompat.getDrawable(this@LandingActivity, R.drawable.button_rectangular_stroke_background)
             this.setTypeface(null, Typeface.NORMAL)
         }
     }
 
     private fun setSelected(v : TextView) {
         v.setTextColor(ContextCompat.getColor(this, R.color.off_black))
-        v.background = ContextCompat.getDrawable(this,
-            R.drawable.button_rectangular_filled_background
-        )
+        v.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
         v.setTypeface(null, Typeface.BOLD)
     }
 }
