@@ -4,8 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Movie
 import com.hbkapps.noyoupick.model.TV
@@ -53,15 +55,22 @@ class MovieTVListAdapter(private val moviesList: List<Movie>, private val tvList
     class MovieTvViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var title: TextView = itemView.title
         var overview: TextView = itemView.overview
+        val poster : ImageView = itemView.poster
 
         fun setMovieDetails(movie: Movie) {
             title.text = movie.title
             overview.text = movie.overview
+            Glide.with(itemView)
+                    .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                    .into(poster)
         }
 
         fun setTvDetails(tv: TV) {
             title.text = tv.name
             overview.text = tv.overview
+            Glide.with(itemView)
+                    .load("https://image.tmdb.org/t/p/w342${tv.posterPath}")
+                    .into(poster)
         }
     }
 }

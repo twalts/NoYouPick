@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,22 +21,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:gravity="bottom">
 
-            <TextView
-                android:id="@+id/btnPickMovie"
-                android:text="@string/pick_movie"
-                style="@style/user_selection_rectangle" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom"
+                android:layout_marginTop="11dp"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="9dp">
 
-            <TextView
-                android:id="@+id/btnPickTelevision"
-                android:text="@string/pick_tv_show"
-                style="@style/user_selection_rectangle" />
+                <TextView
+                    android:id="@+id/btnPickMovie"
+                    android:text="@string/pick_movie"
+                    style="@style/user_selection_rectangle" />
 
+                <TextView
+                    android:id="@+id/btnPickTelevision"
+                    android:text="@string/pick_tv_show"
+                    style="@style/user_selection_rectangle" />
 
-            <!--Button BG should turn white with black text once user selects an option-->
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/btnNext"
                 android:text="@string/next_caps"
