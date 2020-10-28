@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Movie
 import com.hbkapps.noyoupick.model.TV
-import kotlinx.android.synthetic.main.movie_list_recycler_item.view.*
+import kotlinx.android.synthetic.main.movie_list_cardview_item.view.*
 
 class MovieTVListAdapter(private val moviesList: List<Movie>, private val tvList: List<TV>) : RecyclerView.Adapter<MovieTVListAdapter.MovieTvViewHolder>() {
 
@@ -23,7 +23,7 @@ class MovieTVListAdapter(private val moviesList: List<Movie>, private val tvList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieTvViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.movie_list_recycler_item, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.movie_list_cardview_item, parent, false)
         return MovieTvViewHolder(itemView)
     }
 

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/off_black">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,17 +16,47 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="Testing title"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="6dp"
+            android:text="Swipe on the movies!"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/userSelectedMediaRv"
+        <com.yuyakaido.android.cardstackview.CardStackView
+            android:id="@+id/userSelectedMediaCv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/movie_list_recycler_item"/>
+            android:layout_height="500dp"
+            tools:listitem="@layout/movie_list_cardview_item"/>
+
+        <!-- BELOW IS ONLY HERE TO SHOW FUNCTIONALITY-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp">
+
+            <Button
+                android:id="@+id/testDislike"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_weight="1"
+                android:layout_margin="3dp"
+                android:text="DISLIKE"
+                />
+
+            <Button
+                android:id="@+id/testLike"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_weight="1"
+                android:layout_margin="3dp"
+                android:text="LIKE"
+                />
+
+        </LinearLayout>
+        <!-- todo: make buttons less ugly-->
+
 
     </LinearLayout>
 
