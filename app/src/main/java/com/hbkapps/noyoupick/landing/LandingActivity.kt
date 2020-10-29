@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.landing
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -33,6 +34,7 @@ class LandingActivity : BaseActivity() {
             val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+            hideProgressBar()
         }
 
         override fun onFailure() {
@@ -43,6 +45,7 @@ class LandingActivity : BaseActivity() {
     private fun setUpButtons() {
         btnNext.setOnClickListener {
             presenter.onNextButtonClicked(genreListListener)
+            showProgressBar()
         }
 
         btnPickMovie.setOnClickListener {
