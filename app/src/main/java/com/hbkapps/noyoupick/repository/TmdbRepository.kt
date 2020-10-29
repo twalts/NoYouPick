@@ -30,6 +30,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     private fun makeLoadMoviesListFromSelectionCall(callListener: LoadMediaListener, selectedGenres: String) {
+        callListener.showProgressBar()
         tmdbApiInterface
                 .getMoviesFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
                 .enqueue(object : Callback<GetMoviesFromSelectionResponse> {
@@ -38,13 +39,16 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         if (response.isSuccessful && responseBody != null) {
                             movieListFromSelection = responseBody.movies
                             callListener.onMovieListLoaded(movieListFromSelection)
+                            callListener.hideProgressBar()
                         } else {
                             callListener.onFailure()
+                            callListener.hideProgressBar()
                         }
                     }
 
                     override fun onFailure(call: Call<GetMoviesFromSelectionResponse>, t: Throwable) {
                         callListener.onFailure()
+                        callListener.hideProgressBar()
                     }
                 })
     }
@@ -58,6 +62,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     private fun makeLoadTVListFromSelectionCall(callListener: LoadMediaListener, selectedGenres : String) {
+        callListener.showProgressBar()
         tmdbApiInterface
                 .getTVFromUserSelectedGenres(page = 1, selectedGenres = selectedGenres)
                 .enqueue(object : Callback<GetTVFromSelectionResponse> {
@@ -67,14 +72,17 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         if (response.isSuccessful && responseBody != null) {
                             tvListFromSelection = responseBody.movies
                             callListener.onTvListLoaded(tvListFromSelection)
+                            callListener.hideProgressBar()
                         } else {
                             callListener.onFailure()
+                            callListener.hideProgressBar()
                         }
                     }
 
                     override fun onFailure(call: Call<GetTVFromSelectionResponse>, t: Throwable) {
                         Timber.d(t, "tmdb: %s", t.message)
                         callListener.onFailure()
+                        callListener.hideProgressBar()
                     }
                 })
     }
@@ -92,6 +100,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     private fun makeLoadMovieGenreListCall(callListener: GenreListListener) {
+        callListener.showProgressBar()
         tmdbApiInterface
                 .getListOfMovieGenres()
                 .enqueue(object : Callback<GetGenresResponse> {
@@ -100,18 +109,22 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         if (response.isSuccessful && responseBody != null) {
                             genreList = responseBody.genres
                             callListener.onGenreListLoaded(genreList)
+                            callListener.hideProgressBar()
                         } else {
                             callListener.onFailure()
+                            callListener.hideProgressBar()
                         }
                     }
 
                     override fun onFailure(call: Call<GetGenresResponse>, t: Throwable) {
                         callListener.onFailure()
+                        callListener.hideProgressBar()
                     }
                 })
     }
 
     private fun makeLoadTVGenreListCall(callListener: GenreListListener) {
+        callListener.showProgressBar()
         tmdbApiInterface
                 .getListOfTVGenres()
                 .enqueue(object : Callback<GetGenresResponse> {
@@ -122,11 +135,13 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                             callListener.onGenreListLoaded(genreList)
                         } else {
                             callListener.onFailure()
+                            callListener.hideProgressBar()
                         }
                     }
 
                     override fun onFailure(call: Call<GetGenresResponse>, t: Throwable) {
                         callListener.onFailure()
+                        callListener.hideProgressBar()
                     }
                 })
     }
@@ -164,10 +179,14 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         fun onMovieListLoaded(movieList: List<Movie>)
         fun onTvListLoaded(tvList : List<TV>)
         fun onFailure()
+        fun showProgressBar()
+        fun hideProgressBar()
     }
 
     interface GenreListListener {
         fun onGenreListLoaded(genreList: List<GenreItem>)
         fun onFailure()
+        fun showProgressBar()
+        fun hideProgressBar()
     }
 }

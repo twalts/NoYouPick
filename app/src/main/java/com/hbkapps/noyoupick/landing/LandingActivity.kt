@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.landing
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -20,6 +21,7 @@ class LandingActivity : BaseActivity() {
 
     @Inject
     lateinit var presenter: LandingPresenter
+    private lateinit var progressDialog : Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +35,22 @@ class LandingActivity : BaseActivity() {
             val intent = Intent(this@LandingActivity, GenreSelectionActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+            hideProgressBar()
         }
 
         override fun onFailure() {
             //todo
+        }
+
+        override fun showProgressBar() {
+            progressDialog = Dialog(this@LandingActivity)
+            progressDialog.setContentView(R.layout.progress_bar_custom_dialog)
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+        }
+
+        override fun hideProgressBar() {
+            progressDialog.dismiss()
         }
     }
 
