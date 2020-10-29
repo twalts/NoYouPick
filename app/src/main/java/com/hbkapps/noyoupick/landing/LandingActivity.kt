@@ -21,7 +21,6 @@ class LandingActivity : BaseActivity() {
 
     @Inject
     lateinit var presenter: LandingPresenter
-    private lateinit var progressDialog : Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,22 +40,12 @@ class LandingActivity : BaseActivity() {
         override fun onFailure() {
             //todo
         }
-
-        override fun showProgressBar() {
-            progressDialog = Dialog(this@LandingActivity)
-            progressDialog.setContentView(R.layout.progress_bar_custom_dialog)
-            progressDialog.setCancelable(false)
-            progressDialog.show()
-        }
-
-        override fun hideProgressBar() {
-            progressDialog.dismiss()
-        }
     }
 
     private fun setUpButtons() {
         btnNext.setOnClickListener {
             presenter.onNextButtonClicked(genreListListener)
+            showProgressBar()
         }
 
         btnPickMovie.setOnClickListener {

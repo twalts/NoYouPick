@@ -21,7 +21,6 @@ class GenreSelectionActivity : BaseActivity() {
     @Inject
     lateinit var presenter : GenreSelectionPresenter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var progressDialog : Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +30,7 @@ class GenreSelectionActivity : BaseActivity() {
         setUpRecyclerView(presenter.getGenreList())
         btnSubmitGenreChoice.setOnClickListener {
             presenter.onSubmitBtnClicked(loadMediaListener)
+            showProgressBar()
         }
     }
 
@@ -39,27 +39,18 @@ class GenreSelectionActivity : BaseActivity() {
             val intent = Intent(this@GenreSelectionActivity, MovieTVListActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+            hideProgressBar()
         }
 
         override fun onTvListLoaded(tvList: List<TV>) {
             val intent = Intent(this@GenreSelectionActivity, MovieTVListActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
+            hideProgressBar()
         }
 
         override fun onFailure() {
             //todo
-        }
-
-        override fun showProgressBar() {
-            progressDialog = Dialog(this@GenreSelectionActivity)
-            progressDialog.setContentView(R.layout.progress_bar_custom_dialog)
-            progressDialog.setCancelable(false)
-            progressDialog.show()
-        }
-
-        override fun hideProgressBar() {
-            progressDialog.dismiss()
         }
     }
 
