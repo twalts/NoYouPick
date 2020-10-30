@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/off_black">
+    android:background="@color/off_white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,49 +14,73 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="46dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="5dp"
             android:layout_marginBottom="6dp"
-            android:text="Swipe on the movies!"
-            android:textColor="@color/white"
-            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text="DISCOVER"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <com.yuyakaido.android.cardstackview.CardStackView
             android:id="@+id/userSelectedMediaCv"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="550dp"
             tools:listitem="@layout/movie_list_cardview_item"/>
 
-        <!-- BELOW IS ONLY HERE TO SHOW FUNCTIONALITY-->
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/button_container"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="70dp">
+            android:layout_marginBottom="8dp"
+            android:layout_height="80dp"
+            android:clipChildren="false">
 
-            <Button
-                android:id="@+id/testDislike"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_launcher_background"
-                android:layout_weight="1"
-                android:layout_margin="3dp"
-                android:text="DISLIKE"
-                />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/dislikeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/rewindButton"
+                android:src="@drawable/dislike_glyph"
+                app:tint="#ED7563"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#22ED7563"
+                android:contentDescription="@string/dislike_button"/>
 
-            <Button
-                android:id="@+id/testLike"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_launcher_background"
-                android:layout_weight="1"
-                android:layout_margin="3dp"
-                android:text="LIKE"
-                />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/rewindButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/rewind_glyph"
+                app:tint="#5BC9FA"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="mini"
+                app:rippleColor="#225BC9FA"
+                android:contentDescription="@string/dislike_button" />
 
-        </LinearLayout>
-        <!-- todo: make buttons less ugly-->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/likeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/rewindButton"
+                android:src="@drawable/like_glyph"
+                app:tint="#6FE2B3"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#226FE2B3"
+                android:contentDescription="@string/like_button" />
 
+        </RelativeLayout>
 
     </LinearLayout>
 
