@@ -12,5 +12,8 @@
     <string name="second_step_instructions">Now select the <b>genres</b> you are interested in watching.</string>
 
     <string name="poster_content_description">Media poster image</string>
+    <string name="like_button">Like Button</string>
+    <string name="dislike_button">Dislike Button</string>
+    <string name="rewind_button">Rewind Button</string>
 
 </resources>

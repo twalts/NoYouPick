@@ -47,31 +47,32 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
         layoutManager.apply {
             setDirections(arrayListOf(Direction.Right, Direction.Left))
             setCanScrollHorizontal(true)
-            setVisibleCount(5)
-            setStackFrom(StackFrom.Bottom)
-            setTranslationInterval(5f)
+            setVisibleCount(4)
+            setStackFrom(StackFrom.Top)
+            setTranslationInterval(8f)
+            setScaleInterval(.90f)
             setRewindAnimationSetting(rewindSetting)
             setCanScrollVertical(false)
-            setMaxDegree(90f)
+            setMaxDegree(20f)
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
         }
     }
 
     private fun setUpLikeButtons() {
-        testDislike.setOnClickListener {
+        dislikeButton.setOnClickListener {
             val dislikeAnimation = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Left)
-                .setDuration(200)
+                .setDuration(600)
                 .setInterpolator(DecelerateInterpolator())
                 .build()
             layoutManager.setSwipeAnimationSetting(dislikeAnimation)
             userSelectedMediaCv.swipe()
         }
 
-        testLike.setOnClickListener {
+        likeButton.setOnClickListener {
             val likeAnimation = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Right)
-                .setDuration(200)
+                .setDuration(600)
                 .setInterpolator(DecelerateInterpolator())
                 .build()
             layoutManager.setSwipeAnimationSetting(likeAnimation)
