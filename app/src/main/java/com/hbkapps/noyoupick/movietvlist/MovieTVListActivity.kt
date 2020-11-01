@@ -3,13 +3,13 @@ package com.hbkapps.noyoupick.movietvlist
 import android.os.Bundle
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.Toast
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.model.TV
+import com.hbkapps.noyoupick.model.Media
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.android.synthetic.main.activity_movie_tv_display.*
-import timber.log.Timber
+import java.util.Stack
 import javax.inject.Inject
 
 class MovieTVListActivity : BaseActivity(), CardStackListener {
@@ -17,6 +17,9 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     @Inject
     lateinit var presenter : MovieTVListPresenter
     lateinit var layoutManager: CardStackLayoutManager
+
+    var currStackPos = 0
+    var userSelections = Stack<Pair<Media, Direction>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,23 +29,17 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     }
 
     private val mediaListListener: MovieTVListPresenter.MediaListListener = object : MovieTVListPresenter.MediaListListener {
-        override fun loadMediaList(movieList: List<Movie>, tvList: List<TV>) {
+        override fun loadMediaList(mediaList: List<Media>) {
             setLayoutManagerOptions()
             setUpLikeButtons()
 
-            val adapter = MovieTVListAdapter(movieList, tvList)
+            val adapter = MovieTVListAdapter(mediaList)
             userSelectedMediaCv.layoutManager = layoutManager
             userSelectedMediaCv.adapter = adapter
         }
     }
 
     private fun setLayoutManagerOptions() {
-        val rewindSetting = RewindAnimationSetting.Builder()
-            .setDirection(Direction.Top)
-            .setDuration(200)
-            .setInterpolator(DecelerateInterpolator())
-            .build()
-
         layoutManager = CardStackLayoutManager(applicationContext, this@MovieTVListActivity)
         layoutManager.apply {
             setDirections(arrayListOf(Direction.Right, Direction.Left))
@@ -51,7 +48,6 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
             setStackFrom(StackFrom.Top)
             setTranslationInterval(8f)
             setScaleInterval(.90f)
-            setRewindAnimationSetting(rewindSetting)
             setCanScrollVertical(false)
             setMaxDegree(20f)
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
@@ -78,6 +74,18 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
             layoutManager.setSwipeAnimationSetting(likeAnimation)
             userSelectedMediaCv.swipe()
         }
+
+        rewindButton.setOnClickListener {
+            if (userSelections.isNotEmpty()) {
+                val rewindAnimation = RewindAnimationSetting.Builder()
+                        .setDirection(userSelections.peek().second)
+                        .setDuration(200)
+                        .setInterpolator(DecelerateInterpolator())
+                        .build()
+                layoutManager.setRewindAnimationSetting(rewindAnimation)
+                userSelectedMediaCv.rewind()
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -89,18 +97,30 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     override fun onCardDragging(direction: Direction?, ratio: Float) {}
 
     override fun onCardSwiped(direction: Direction?) {
-        //test function to show data is being passed
-        Timber.e(direction?.name)
+        if (direction != null) {
+            userSelections.push(Pair(presenter.getMediaList()[currStackPos], direction))
+        }
+
+        if (currStackPos == presenter.getMediaList().size - 1) {
+            var sb = StringBuilder()
+            for (pair in userSelections) {
+                if (pair.second == Direction.Right) {
+                    sb.append("${pair.first.getMediaTitle()} \n")
+                }
+            }
+            Toast.makeText(this, "you liked: \n $sb", Toast.LENGTH_LONG).show()
+        }
     }
 
-    override fun onCardRewound() {}
+    override fun onCardRewound() {
+        userSelections.pop()
+    }
 
     override fun onCardCanceled() {}
 
     override fun onCardAppeared(view: View?, position: Int) {}
 
     override fun onCardDisappeared(view: View?, position: Int) {
-        //test function to show data is being passed
-        Timber.e("${presenter.getCurMediaItemForTesting(position)}")
+        currStackPos = position
     }
 }

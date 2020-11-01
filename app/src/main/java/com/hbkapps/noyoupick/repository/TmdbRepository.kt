@@ -3,6 +3,7 @@ package com.hbkapps.noyoupick.repository
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.dagger.ActivityScope
 import com.hbkapps.noyoupick.model.GenreItem
+import com.hbkapps.noyoupick.model.Media
 import com.hbkapps.noyoupick.model.Movie
 import com.hbkapps.noyoupick.model.TV
 import com.hbkapps.noyoupick.tmdbapi.*
@@ -17,15 +18,14 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     private var genreList: List<GenreItem> = ArrayList()
 
-    private var movieListFromSelection: List<Movie> = ArrayList()
-    private var tvListFromSelection: List<TV> = ArrayList()
+    private var mediaListFromSelection: List<Media> = ArrayList()
     private var mediaType : Int = 0
 
     fun loadMoviesListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
-        if (movieListFromSelection.isNullOrEmpty()) {
+        if (mediaListFromSelection.isNullOrEmpty() || mediaListFromSelection.first() !is Movie) {
             makeLoadMoviesListFromSelectionCall(callListener, selectedGenres)
         } else {
-            callListener.onMovieListLoaded(movieListFromSelection)
+            callListener.onMediaListLoaded(mediaListFromSelection)
         }
     }
 
@@ -36,8 +36,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                     override fun onResponse(call: Call<GetMoviesFromSelectionResponse>, response: Response<GetMoviesFromSelectionResponse>) {
                         val responseBody = response.body()
                         if (response.isSuccessful && responseBody != null) {
-                            movieListFromSelection = responseBody.movies
-                            callListener.onMovieListLoaded(movieListFromSelection)
+                            mediaListFromSelection = responseBody.results
+                            callListener.onMediaListLoaded(mediaListFromSelection)
                         } else {
                             callListener.onFailure()
                         }
@@ -50,10 +50,10 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     fun loadTVListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
-        if (tvListFromSelection.isNullOrEmpty()) {
+        if (mediaListFromSelection.isNullOrEmpty() || mediaListFromSelection.first() !is TV) {
             makeLoadTVListFromSelectionCall(callListener, selectedGenres)
         } else {
-            callListener.onTvListLoaded(tvListFromSelection)
+            callListener.onMediaListLoaded(mediaListFromSelection)
         }
     }
 
@@ -65,8 +65,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         Timber.d("tmdb:  %s", response)
                         val responseBody = response.body()
                         if (response.isSuccessful && responseBody != null) {
-                            tvListFromSelection = responseBody.movies
-                            callListener.onTvListLoaded(tvListFromSelection)
+                            mediaListFromSelection = responseBody.results
+                            callListener.onMediaListLoaded(mediaListFromSelection)
                         } else {
                             callListener.onFailure()
                         }
@@ -147,22 +147,16 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return mediaType
     }
 
-    fun getMoviesListFromSelection(): List<Movie> {
-        return movieListFromSelection
+    fun clearMediaListFromSelection() {
+        mediaListFromSelection = ArrayList()
     }
 
-    fun getTvListFromSelection(): List<TV> {
-        return tvListFromSelection
-    }
-
-    fun clearMoviesListFromSelection() {
-        movieListFromSelection = ArrayList()
-        tvListFromSelection = ArrayList()
+    fun getMediaListFromSelection(): List<Media> {
+        return mediaListFromSelection
     }
 
     interface LoadMediaListener {
-        fun onMovieListLoaded(movieList: List<Movie>)
-        fun onTvListLoaded(tvList : List<TV>)
+        fun onMediaListLoaded(mediaList: List<Media>)
         fun onFailure()
     }
 

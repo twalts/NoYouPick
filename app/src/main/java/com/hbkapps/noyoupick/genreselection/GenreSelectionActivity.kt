@@ -1,6 +1,5 @@
 package com.hbkapps.noyoupick.genreselection
 
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -8,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.model.TV
+import com.hbkapps.noyoupick.model.Media
 import com.hbkapps.noyoupick.movietvlist.MovieTVListActivity
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.activity_genre_selection.*
@@ -35,14 +33,7 @@ class GenreSelectionActivity : BaseActivity() {
     }
 
     private val loadMediaListener : TmdbRepository.LoadMediaListener = object : TmdbRepository.LoadMediaListener {
-        override fun onMovieListLoaded(movieList: List<Movie>) {
-            val intent = Intent(this@GenreSelectionActivity, MovieTVListActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
-            hideProgressBar()
-        }
-
-        override fun onTvListLoaded(tvList: List<TV>) {
+        override fun onMediaListLoaded(mediaList: List<Media>) {
             val intent = Intent(this@GenreSelectionActivity, MovieTVListActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_left)
