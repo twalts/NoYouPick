@@ -17,4 +17,12 @@ data class TV(
     override fun getMediaTitle(): String? {
         return name
     }
+
+    override fun getMediaOverview(): String? {
+        return overview
+    }
+
+    override fun getMediaPosterPath(): String? {
+        return posterPath
+    }
 }

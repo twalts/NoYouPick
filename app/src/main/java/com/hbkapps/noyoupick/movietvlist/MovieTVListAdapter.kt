@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Media
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.model.TV
 import kotlinx.android.synthetic.main.media_list_cardview_item.view.*
 
 class MovieTVListAdapter(private val mediaList: List<Media>) : RecyclerView.Adapter<MovieTVListAdapter.MovieTvViewHolder>() {
@@ -24,10 +22,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: MovieTvViewHolder, position: Int) {
-        when (val currMedia = mediaList[position]) {
-            is Movie -> holder.setMovieDetails(currMedia)
-            is TV -> holder.setTvDetails(currMedia)
-        }
+        holder.setMediaDetails(mediaList[position])
     }
 
     override fun getItemCount(): Int {
@@ -45,20 +40,13 @@ class MovieTVListAdapter(private val mediaList: List<Media>) : RecyclerView.Adap
         var overview: TextView = itemView.overview
         private val poster : ImageView = itemView.poster
 
-        fun setMovieDetails(movie: Movie) {
-            title.text = movie.title
-            overview.text = movie.overview
+        fun setMediaDetails(media: Media) {
+            title.text = media.getMediaTitle()
+            overview.text = media.getMediaOverview()
             Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                    .load("https://image.tmdb.org/t/p/w342${media.getMediaPosterPath()}")
                     .into(poster)
         }
 
-        fun setTvDetails(tv: TV) {
-            title.text = tv.name
-            overview.text = tv.overview
-            Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${tv.posterPath}")
-                    .into(poster)
-        }
     }
 }

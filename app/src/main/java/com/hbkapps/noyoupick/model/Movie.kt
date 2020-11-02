@@ -17,4 +17,13 @@ data class Movie(
     override fun getMediaTitle(): String? {
         return title
     }
+
+    override fun getMediaOverview(): String? {
+        return overview
+    }
+
+    override fun getMediaPosterPath(): String? {
+        return posterPath
+    }
+
 }
