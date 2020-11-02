@@ -14,9 +14,11 @@
         android:theme="@style/Theme.NoYouPick">
         <activity
             android:name=".movietvlist.MovieTVListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".landing.LandingActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +28,7 @@
         </activity>
         <activity
             android:name=".genreselection.GenreSelectionActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
