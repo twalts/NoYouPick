@@ -7,6 +7,6 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class GetTVFromSelectionResponse(
         @Json(name = "page") val page: Int,
-        @Json(name = "results") val movies: List<TV>,
+        @Json(name = "results") val results: List<TV>,
         @Json(name = "total_pages") val pages: Int
 )

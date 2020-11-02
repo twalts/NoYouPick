@@ -12,4 +12,18 @@ data class Movie(
     @Json(name="backdrop_path") val backdropPath: String?,
     @Json(name="vote_average") val rating: Float?,
     @Json(name="release_date") val releaseDate: String?
-)
+): Media() {
+
+    override fun getMediaTitle(): String? {
+        return title
+    }
+
+    override fun getMediaOverview(): String? {
+        return overview
+    }
+
+    override fun getMediaPosterPath(): String? {
+        return posterPath
+    }
+
+}
