@@ -2,10 +2,7 @@ package com.hbkapps.noyoupick.repository
 
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.dagger.ActivityScope
-import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.model.Media
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.model.TV
+import com.hbkapps.noyoupick.model.*
 import com.hbkapps.noyoupick.tmdbapi.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,6 +16,9 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     private var genreList: List<GenreItem> = ArrayList()
 
     private var mediaListFromSelection: List<Media> = ArrayList()
+    private var currentCastList : List<Cast>? = ArrayList()
+    private var currentCrewList : List<Crew>? = ArrayList()
+
     private var mediaType : Int = 0
 
     fun loadMoviesListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
@@ -131,6 +131,27 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
+    fun loadCastAndCrewFromMovie(movieId : String, callListener : LoadCastAndCrewListener) {
+        tmdbApiInterface.getCreditsFromSelectedMovie(movieId = movieId)
+            .enqueue(object : Callback<GetCreditsFromMovieResponse> {
+                override fun onResponse(call: Call<GetCreditsFromMovieResponse>, response: Response<GetCreditsFromMovieResponse>) {
+                    val responseBody = response.body()
+                    Timber.e("in onResponse")
+                    if (response.isSuccessful && responseBody != null) {
+                        Timber.e("response was successful")
+                        currentCastList = responseBody.cast
+                        currentCrewList = responseBody.crew
+                        callListener.onCastAndCrewLoaded(currentCastList, currentCrewList)
+                    } else {
+                        callListener.onFailure()
+                    }
+                }
+
+                override fun onFailure(call: Call<GetCreditsFromMovieResponse>, t: Throwable) {
+                }
+            })
+    }
+
     fun getGenreList(): List<GenreItem> {
         return genreList
     }
@@ -147,6 +168,14 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return mediaType
     }
 
+    fun getCrewList(): List<Crew>? {
+        return currentCrewList
+    }
+
+    fun getCastList(): List<Cast>? {
+        return currentCastList
+    }
+
     fun clearMediaListFromSelection() {
         mediaListFromSelection = ArrayList()
     }
@@ -157,6 +186,11 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     interface LoadMediaListener {
         fun onMediaListLoaded(mediaList: List<Media>)
+        fun onFailure()
+    }
+
+    interface LoadCastAndCrewListener {
+        fun onCastAndCrewLoaded(castList: List<Cast>?, crewList : List<Crew>?)
         fun onFailure()
     }
 

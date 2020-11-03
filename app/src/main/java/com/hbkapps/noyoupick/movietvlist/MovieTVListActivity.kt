@@ -6,7 +6,10 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
+import com.hbkapps.noyoupick.model.Cast
+import com.hbkapps.noyoupick.model.Crew
 import com.hbkapps.noyoupick.model.Media
+import com.hbkapps.noyoupick.repository.TmdbRepository
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.android.synthetic.main.activity_movie_tv_display.*
 import java.util.Stack
@@ -31,12 +34,34 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     private val mediaListListener: MovieTVListPresenter.MediaListListener = object : MovieTVListPresenter.MediaListListener {
         override fun loadMediaList(mediaList: List<Media>) {
             setLayoutManagerOptions()
-            setUpLikeButtons()
+            setUpButtons()
 
-            val adapter = MovieTVListAdapter(mediaList)
+            val adapter = MovieTVListAdapter(mediaList, mediaCardListener)
             userSelectedMediaCv.layoutManager = layoutManager
             userSelectedMediaCv.adapter = adapter
         }
+    }
+
+    private val mediaCardListener : MovieTVListAdapter.MediaCardListener = object : MovieTVListAdapter.MediaCardListener {
+        override fun onCardExpanded() {
+            showProgressBar()
+            presenter.getMediaList()[currStackPos].getMediaId()?.let { presenter.loadCastAndCrewList(it.toString(), loadCastAndCrewListener) }
+        }
+
+        override fun getDirectors() : String {
+            return presenter.parseDirectors()
+        }
+    }
+
+    private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
+        override fun onCastAndCrewLoaded(castList: List<Cast>?, crewList: List<Crew>?) {
+            hideProgressBar()
+        }
+
+        override fun onFailure() {
+            hideProgressBar()
+        }
+
     }
 
     private fun setLayoutManagerOptions() {
@@ -49,12 +74,12 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
             setTranslationInterval(8f)
             setScaleInterval(.90f)
             setCanScrollVertical(false)
-            setMaxDegree(20f)
+            setMaxDegree(0f)
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
         }
     }
 
-    private fun setUpLikeButtons() {
+    private fun setUpButtons() {
         dislikeButton.setOnClickListener {
             val dislikeAnimation = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Left)

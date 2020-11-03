@@ -25,4 +25,12 @@ data class TV(
     override fun getMediaPosterPath(): String? {
         return posterPath
     }
+
+    override fun getMediaBackdropPath(): String? {
+        return backdropPath
+    }
+
+    override fun getMediaId(): Long? {
+        return id
+    }
 }

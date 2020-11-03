@@ -26,4 +26,12 @@ data class Movie(
         return posterPath
     }
 
+    override fun getMediaBackdropPath(): String? {
+        return backdropPath
+    }
+
+    override fun getMediaId(): Long? {
+        return id
+    }
+
 }

@@ -22,8 +22,7 @@
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/userSelectedMediaCv"
         android:layout_width="match_parent"
-        android:layout_height="515dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@id/discoverText"
         tools:listitem="@layout/media_list_cardview_item" />
 
@@ -31,8 +30,10 @@
         android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:layout_marginBottom="30dp"
         android:gravity="center"
         android:orientation="horizontal"
+        android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -2,6 +2,7 @@ package com.hbkapps.noyoupick.tmdbapi
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TmdbApiInterface {
@@ -35,4 +36,10 @@ interface TmdbApiInterface {
     fun getListOfTVGenres(
             @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa"
     ): Call<GetGenresResponse>
+
+    @GET("movie/{movie_id}/credits")
+    fun getCreditsFromSelectedMovie(
+            @Path("movie_id") movieId : String,
+            @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa"
+    ): Call<GetCreditsFromMovieResponse>
 }
