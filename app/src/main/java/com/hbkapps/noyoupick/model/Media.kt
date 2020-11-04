@@ -8,6 +8,7 @@ abstract class Media {
     abstract fun getMediaPosterPath(): String?
     abstract fun getMediaBackdropPath(): String?
     abstract fun getMediaId(): Long?
+    abstract fun getMediaUserRating(): Float?
 
     abstract var crewList: List<Crew>?
     abstract var castList: List<Cast>?
@@ -31,6 +32,27 @@ abstract class Media {
             }
             Timber.e("$directors")
             directors.toString()
+        } else ""
+    }
+
+    fun getMediaCast(): String? {
+        return when {
+            castList == null -> null
+            castList!!.isEmpty() -> ""
+            else -> parseCast(castList)
+        }
+    }
+
+    private fun parseCast(castList : List<Cast>?) : String {
+        return if (castList != null) {
+            val cast = StringBuilder()
+            var x = 0
+            while (x < 5) {
+                castList[x].name?.let { cast.append("$it\n") }
+                x++
+            }
+            Timber.e("$cast")
+            cast.toString()
         } else ""
     }
 }

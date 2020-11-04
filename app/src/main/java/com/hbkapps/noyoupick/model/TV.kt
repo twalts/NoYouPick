@@ -36,4 +36,8 @@ data class TV(
     override fun getMediaId(): Long? {
         return id
     }
+
+    override fun getMediaUserRating(): Float? {
+        return rating
+    }
 }

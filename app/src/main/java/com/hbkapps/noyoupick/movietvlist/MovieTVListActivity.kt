@@ -6,10 +6,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import com.hbkapps.noyoupick.BaseActivity
 import com.hbkapps.noyoupick.R
-import com.hbkapps.noyoupick.model.Cast
-import com.hbkapps.noyoupick.model.Crew
 import com.hbkapps.noyoupick.model.Media
-import com.hbkapps.noyoupick.repository.TmdbRepository
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.android.synthetic.main.activity_movie_tv_display.*
 import java.util.Stack

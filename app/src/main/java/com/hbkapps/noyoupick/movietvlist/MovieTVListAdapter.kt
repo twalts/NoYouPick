@@ -1,6 +1,7 @@
 package com.hbkapps.noyoupick.movietvlist
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,9 +65,9 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                 holder.collapseDetails()
                 mediaListExpandedState[position] = false
             } else {
-                if (media.getMediaDirectors() == null && media.getMediaId() != null) {
-                    currentViewHolder = holder
-                    tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
+                if (media.getMediaId() != null && media.getMediaDirectors() == null) {
+                     currentViewHolder = holder
+                     tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
                 } else {
                     holder.expandDetails()
                 }
@@ -81,6 +82,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.crewList = crewList
             media.castList = castList
             currentViewHolder?.director?.text = media.getMediaDirectors()
+            currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
 
@@ -88,6 +90,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.crewList = emptyList()
             media.castList = emptyList()
             currentViewHolder?.director?.text = media.getMediaDirectors()
+            currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
 
@@ -98,7 +101,9 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         private var overview: TextView = itemView.overview
         private val poster: ImageView = itemView.poster
         private val backdrop: ImageView = itemView.backdrop
+        private val userRating : TextView = itemView.userRating
         val director: TextView = itemView.director
+        val cast : TextView = itemView.cast
 
         private var constraintLayout: ConstraintLayout = itemView.findViewById(R.id.root)
         private val collapsedConstraintSet: ConstraintSet = ConstraintSet()
@@ -118,7 +123,11 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             Glide.with(itemView)
                     .load("https://image.tmdb.org/t/p/w342${media.getMediaBackdropPath()}")
                     .into(backdrop)
+            //todo move userRating text to string resource
+            poster.clipToOutline = true
+            userRating.text = "User Rating: ${media.getMediaUserRating()}/10"
             director.text = media.getMediaDirectors()
+            cast.text = media.getMediaCast()
         }
 
         fun collapseDetails() {
