@@ -36,32 +36,10 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
             setLayoutManagerOptions()
             setUpButtons()
 
-            val adapter = MovieTVListAdapter(mediaList, mediaCardListener)
+            val adapter = MovieTVListAdapter(mediaList, presenter.tmdbRepository)
             userSelectedMediaCv.layoutManager = layoutManager
             userSelectedMediaCv.adapter = adapter
         }
-    }
-
-    private val mediaCardListener : MovieTVListAdapter.MediaCardListener = object : MovieTVListAdapter.MediaCardListener {
-        override fun onCardExpanded() {
-            showProgressBar()
-            presenter.getMediaList()[currStackPos].getMediaId()?.let { presenter.loadCastAndCrewList(it.toString(), loadCastAndCrewListener) }
-        }
-
-        override fun getDirectors() : String {
-            return presenter.parseDirectors()
-        }
-    }
-
-    private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
-        override fun onCastAndCrewLoaded(castList: List<Cast>?, crewList: List<Crew>?) {
-            hideProgressBar()
-        }
-
-        override fun onFailure() {
-            hideProgressBar()
-        }
-
     }
 
     private fun setLayoutManagerOptions() {
@@ -116,7 +94,7 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_out_right)
-        presenter.clearMoviesListFromSelection()
+        presenter.clearMediaListFromSelection()
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {}

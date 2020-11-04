@@ -14,6 +14,9 @@ data class Movie(
     @Json(name="release_date") val releaseDate: String?
 ): Media() {
 
+    override var crewList: List<Crew>? = null
+    override var castList: List<Cast>? = null
+
     override fun getMediaTitle(): String? {
         return title
     }
@@ -33,5 +36,4 @@ data class Movie(
     override fun getMediaId(): Long? {
         return id
     }
-
 }

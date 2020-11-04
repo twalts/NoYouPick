@@ -14,6 +14,9 @@ data class TV(
     @Json(name="first_air_date") val firstAirDate: String?
 ): Media() {
 
+    override var crewList: List<Crew>? = null
+    override var castList: List<Cast>? = null
+
     override fun getMediaTitle(): String? {
         return name
     }

@@ -14,11 +14,7 @@ import javax.inject.Inject
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
     private var genreList: List<GenreItem> = ArrayList()
-
     private var mediaListFromSelection: List<Media> = ArrayList()
-    private var currentCastList : List<Cast>? = ArrayList()
-    private var currentCrewList : List<Crew>? = ArrayList()
-
     private var mediaType : Int = 0
 
     fun loadMoviesListFromSelection(callListener: LoadMediaListener, selectedGenres: String) {
@@ -131,23 +127,20 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
-    fun loadCastAndCrewFromMovie(movieId : String, callListener : LoadCastAndCrewListener) {
-        tmdbApiInterface.getCreditsFromSelectedMovie(movieId = movieId)
+    fun loadCastAndCrewFromMovie(media: Media, callListener: LoadCastAndCrewListener) {
+        tmdbApiInterface.getCreditsFromSelectedMovie(movieId = media.getMediaId().toString())
             .enqueue(object : Callback<GetCreditsFromMovieResponse> {
                 override fun onResponse(call: Call<GetCreditsFromMovieResponse>, response: Response<GetCreditsFromMovieResponse>) {
                     val responseBody = response.body()
-                    Timber.e("in onResponse")
                     if (response.isSuccessful && responseBody != null) {
-                        Timber.e("response was successful")
-                        currentCastList = responseBody.cast
-                        currentCrewList = responseBody.crew
-                        callListener.onCastAndCrewLoaded(currentCastList, currentCrewList)
+                        callListener.onCastAndCrewLoaded(media, responseBody.cast, responseBody.crew)
                     } else {
-                        callListener.onFailure()
+                        callListener.onFailure(media)
                     }
                 }
 
                 override fun onFailure(call: Call<GetCreditsFromMovieResponse>, t: Throwable) {
+                    callListener.onFailure(media)
                 }
             })
     }
@@ -168,14 +161,6 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
         return mediaType
     }
 
-    fun getCrewList(): List<Crew>? {
-        return currentCrewList
-    }
-
-    fun getCastList(): List<Cast>? {
-        return currentCastList
-    }
-
     fun clearMediaListFromSelection() {
         mediaListFromSelection = ArrayList()
     }
@@ -190,8 +175,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     interface LoadCastAndCrewListener {
-        fun onCastAndCrewLoaded(castList: List<Cast>?, crewList : List<Crew>?)
-        fun onFailure()
+        fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList : List<Crew>?)
+        fun onFailure(media: Media)
     }
 
     interface GenreListListener {
