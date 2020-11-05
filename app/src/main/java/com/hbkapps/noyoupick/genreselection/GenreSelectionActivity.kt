@@ -28,6 +28,7 @@ class GenreSelectionActivity : BaseActivity() {
         setUpRecyclerView(presenter.getGenreList())
         btnSubmitGenreChoice.setOnClickListener {
             presenter.onSubmitBtnClicked(loadMediaListener)
+            // TODO: 11/2/2020 add showProgressBar() logic to presenter
             showProgressBar()
         }
     }

@@ -45,6 +45,7 @@ class LandingActivity : BaseActivity() {
     private fun setUpButtons() {
         btnNext.setOnClickListener {
             presenter.onNextButtonClicked(genreListListener)
+            // TODO: 11/2/2020 add showProgressBar() logic to presenter
             showProgressBar()
         }
 

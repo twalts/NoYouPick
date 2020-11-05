@@ -2,10 +2,7 @@ package com.hbkapps.noyoupick.repository
 
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.dagger.ActivityScope
-import com.hbkapps.noyoupick.model.GenreItem
-import com.hbkapps.noyoupick.model.Media
-import com.hbkapps.noyoupick.model.Movie
-import com.hbkapps.noyoupick.model.TV
+import com.hbkapps.noyoupick.model.*
 import com.hbkapps.noyoupick.tmdbapi.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,7 +14,6 @@ import javax.inject.Inject
 class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiInterface) {
 
     private var genreList: List<GenreItem> = ArrayList()
-
     private var mediaListFromSelection: List<Media> = ArrayList()
     private var mediaType : Int = 0
 
@@ -131,6 +127,24 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
+    fun loadCastAndCrewFromMovie(media: Media, callListener: LoadCastAndCrewListener) {
+        tmdbApiInterface.getCreditsFromSelectedMovie(movieId = media.getMediaId().toString())
+            .enqueue(object : Callback<GetCreditsFromMovieResponse> {
+                override fun onResponse(call: Call<GetCreditsFromMovieResponse>, response: Response<GetCreditsFromMovieResponse>) {
+                    val responseBody = response.body()
+                    if (response.isSuccessful && responseBody != null) {
+                        callListener.onCastAndCrewLoaded(media, responseBody.cast, responseBody.crew)
+                    } else {
+                        callListener.onFailure(media)
+                    }
+                }
+
+                override fun onFailure(call: Call<GetCreditsFromMovieResponse>, t: Throwable) {
+                    callListener.onFailure(media)
+                }
+            })
+    }
+
     fun getGenreList(): List<GenreItem> {
         return genreList
     }
@@ -158,6 +172,11 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     interface LoadMediaListener {
         fun onMediaListLoaded(mediaList: List<Media>)
         fun onFailure()
+    }
+
+    interface LoadCastAndCrewListener {
+        fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList : List<Crew>?)
+        fun onFailure(media: Media)
     }
 
     interface GenreListListener {

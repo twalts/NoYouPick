@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".genreselection.GenreSelectionActivity"
     android:orientation="vertical"
-    android:background="@drawable/landing_page_background">
+    android:background="@drawable/landing_page_background_reverse">
 
     <TextView
         android:id="@+id/prompt"

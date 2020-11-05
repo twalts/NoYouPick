@@ -13,7 +13,7 @@ abstract class BaseActivity : AppCompatActivity() {
     fun showProgressBar() {
         progressDialog = Dialog(this)
         progressDialog.setContentView(R.layout.progress_bar_custom_dialog)
-        progressDialog.setCancelable(false)
+        progressDialog.setCancelable(true)
         progressDialog.show()
     }
 

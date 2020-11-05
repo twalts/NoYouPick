@@ -31,9 +31,9 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     private val mediaListListener: MovieTVListPresenter.MediaListListener = object : MovieTVListPresenter.MediaListListener {
         override fun loadMediaList(mediaList: List<Media>) {
             setLayoutManagerOptions()
-            setUpLikeButtons()
+            setUpButtons()
 
-            val adapter = MovieTVListAdapter(mediaList)
+            val adapter = MovieTVListAdapter(mediaList, presenter.tmdbRepository)
             userSelectedMediaCv.layoutManager = layoutManager
             userSelectedMediaCv.adapter = adapter
         }
@@ -49,12 +49,12 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
             setTranslationInterval(8f)
             setScaleInterval(.90f)
             setCanScrollVertical(false)
-            setMaxDegree(20f)
+            setMaxDegree(0f)
             setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
         }
     }
 
-    private fun setUpLikeButtons() {
+    private fun setUpButtons() {
         dislikeButton.setOnClickListener {
             val dislikeAnimation = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Left)
@@ -91,7 +91,7 @@ class MovieTVListActivity : BaseActivity(), CardStackListener {
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_out_right)
-        presenter.clearMoviesListFromSelection()
+        presenter.clearMediaListFromSelection()
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {}
