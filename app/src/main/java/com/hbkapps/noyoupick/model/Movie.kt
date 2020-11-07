@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.model
 
+import com.hbkapps.noyoupick.Constants
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -16,6 +17,7 @@ data class Movie(
 
     override var crewList: List<Crew>? = null
     override var castList: List<Cast>? = null
+    override var creatorList: List<Crew>? = null
 
     override fun getMediaTitle(): String? {
         return title
@@ -39,5 +41,9 @@ data class Movie(
 
     override fun getMediaUserRating(): Float? {
         return rating
+    }
+
+    override fun getMediaType(): Int {
+        return Constants.MEDIA_TYPE_MOVIE
     }
 }

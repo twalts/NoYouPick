@@ -1,7 +1,6 @@
 package com.hbkapps.noyoupick.movietvlist
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Cast
 import com.hbkapps.noyoupick.model.Crew
@@ -66,8 +66,12 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                 mediaListExpandedState[position] = false
             } else {
                 if (media.getMediaId() != null && media.getMediaDirectors() == null) {
-                     currentViewHolder = holder
-                     tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
+                    currentViewHolder = holder
+                    if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+                        tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
+                    } else {
+                        tmdbRepository.loadCastAndCrewFromTvShow(media, loadCastAndCrewListener)
+                    }
                 } else {
                     holder.expandDetails()
                 }
@@ -78,10 +82,16 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
 
 
     private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
-        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
+        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?, creatorList : List<Crew>?) {
             media.crewList = crewList
             media.castList = castList
-            currentViewHolder?.director?.text = media.getMediaDirectors()
+            media.creatorList = creatorList
+            if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+                currentViewHolder?.director?.text = media.getMediaDirectors()
+            } else {
+                currentViewHolder?.director?.text = media.getMediaCreators()
+            }
+            currentViewHolder?.changeCrewHeader(media)
             currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
@@ -144,6 +154,14 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
 
         fun setOnClickListener(onClickListener: View.OnClickListener) {
             constraintLayout.setOnClickListener(onClickListener)
+        }
+
+        fun changeCrewHeader(media : Media) {
+            if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+                itemView.directorHeader.text = "DIRECTOR"
+            } else {
+                itemView.directorHeader.text = "CREATOR"
+            }
         }
     }
 
