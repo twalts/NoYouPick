@@ -65,12 +65,13 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                 holder.collapseDetails()
                 mediaListExpandedState[position] = false
             } else {
-                if (media.getMediaId() != null && media.getMediaDirectors() == null) {
+                if (media.getMediaId() != null && media.getMediaDirectorsOrCreators() == null) {
                     currentViewHolder = holder
                     if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
                         tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
                     } else {
                         tmdbRepository.loadCastAndCrewFromTvShow(media, loadCastAndCrewListener)
+                        tmdbRepository.loadCreatorFromTvShow(media, loadCastAndCrewListener)
                     }
                 } else {
                     holder.expandDetails()
@@ -82,24 +83,26 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
 
 
     private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
-        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?, creatorList : List<Crew>?) {
+        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
             media.crewList = crewList
             media.castList = castList
-            media.creatorList = creatorList
-            if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
-                currentViewHolder?.director?.text = media.getMediaDirectors()
-            } else {
-                currentViewHolder?.director?.text = media.getMediaCreators()
-            }
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
             currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
 
+        override fun onCreatorLoaded(media: Media, creatorList: List<Crew>?) {
+            media.creatorList = creatorList
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
+        }
+
         override fun onFailure(media: Media) {
             media.crewList = emptyList()
             media.castList = emptyList()
-            currentViewHolder?.director?.text = media.getMediaDirectors()
+            media.creatorList = emptyList()
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
@@ -112,7 +115,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         private val poster: ImageView = itemView.poster
         private val backdrop: ImageView = itemView.backdrop
         private val userRating : TextView = itemView.userRating
-        val director: TextView = itemView.director
+        val directorOrCreator: TextView = itemView.directorOrCreator
         val cast : TextView = itemView.cast
 
         private var constraintLayout: ConstraintLayout = itemView.findViewById(R.id.root)
@@ -136,7 +139,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             //todo move userRating text to string resource
             poster.clipToOutline = true
             userRating.text = "User Rating: ${media.getMediaUserRating()}/10"
-            director.text = media.getMediaDirectors()
+            directorOrCreator.text = media.getMediaDirectorsOrCreators()
             cast.text = media.getMediaCast()
         }
 
@@ -157,11 +160,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         }
 
         fun changeCrewHeader(media : Media) {
-            if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
-                itemView.directorHeader.text = "DIRECTOR"
-            } else {
-                itemView.directorHeader.text = "CREATOR"
-            }
+            itemView.directorHeader.text = media.getMediaCrewHeader()
         }
     }
 

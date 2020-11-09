@@ -1,7 +1,6 @@
 package com.hbkapps.noyoupick.model
 
 import com.hbkapps.noyoupick.Constants
-import timber.log.Timber
 
 abstract class Media {
     abstract fun getMediaTitle(): String?
@@ -16,11 +15,21 @@ abstract class Media {
     abstract var castList: List<Cast>?
     abstract var creatorList: List<Crew>?
 
-    fun getMediaCreators() : String? {
+    fun getMediaCrewHeader() : String? {
         return when {
-            creatorList == null -> null
-            creatorList!!.isEmpty() -> ""
-            else -> parseCreators(creatorList)
+            getMediaType() == Constants.MEDIA_TYPE_MOVIE -> "DIRECTOR"
+            getMediaType() == Constants.MEDIA_TYPE_TV -> "CREATOR"
+            else -> ""
+        }
+    }
+
+    fun getMediaDirectorsOrCreators(): String? {
+        return when {
+            crewList == null -> null
+            crewList!!.isEmpty() -> ""
+            getMediaType() == Constants.MEDIA_TYPE_MOVIE -> parseDirectors(crewList)
+            getMediaType() == Constants.MEDIA_TYPE_TV -> parseCreators(creatorList)
+            else -> "ERROR"
         }
     }
 
@@ -33,17 +42,8 @@ abstract class Media {
                 x++
                 if (x == 5) break
             }
-            Timber.e("$cast")
             cast.toString()
         } else ""
-    }
-
-    fun getMediaDirectors(): String? {
-        return when {
-            crewList == null -> null
-            crewList!!.isEmpty() -> ""
-            else -> parseDirectors(crewList)
-        }
     }
 
     private fun parseDirectors(crewList: List<Crew>?): String {
@@ -54,16 +54,14 @@ abstract class Media {
                     crew.name?.let { directors.append("$it\n") }
                 }
             }
-            Timber.e("$directors")
             directors.toString()
         } else if (crewList != null && getMediaType() == Constants.MEDIA_TYPE_TV) {
             val creators = StringBuilder()
             for (crew in crewList) {
-                if (crew.job!!.contains("Creator")) {
+                if (crew.job != null && crew.job.contains("Creator")) {
                     crew.name?.let { creators.append("$it\n") }
                 }
             }
-            Timber.e("$creators")
             creators.toString()
         } else ""
     }
@@ -85,7 +83,6 @@ abstract class Media {
                 x++
                 if (x == 5) break
             }
-            Timber.e("$cast")
             cast.toString()
         } else ""
     }

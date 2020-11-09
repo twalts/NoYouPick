@@ -133,8 +133,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 override fun onResponse(call: Call<GetCreditsFromMediaResponse>, response: Response<GetCreditsFromMediaResponse>) {
                     val responseBody = response.body()
                     if (response.isSuccessful && responseBody != null) {
-                        val showCreator : List<Crew>? = null
-                        callListener.onCastAndCrewLoaded(media, responseBody.cast, responseBody.crew, showCreator)
+                        callListener.onCastAndCrewLoaded(media, responseBody.cast, responseBody.crew)
                     } else {
                         callListener.onFailure(media)
                     }
@@ -152,7 +151,9 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                     override fun onResponse(call: Call<GetCreditsFromMediaResponse>, response: Response<GetCreditsFromMediaResponse>) {
                         val responseBody = response.body()
                         if (response.isSuccessful && responseBody != null) {
-                            loadCreatorFromTvShow(media, callListener, responseBody.cast, responseBody.crew)
+                            callListener.onCastAndCrewLoaded(media, responseBody.cast, responseBody.crew)
+                        } else {
+                            callListener.onFailure(media)
                         }
                     }
 
@@ -162,14 +163,13 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
-    fun loadCreatorFromTvShow(media: Media, callListener: LoadCastAndCrewListener,
-                              castList: List<Cast>?, crewList: List<Crew>?) {
+    fun loadCreatorFromTvShow(media: Media, callListener: LoadCastAndCrewListener) {
         tmdbApiInterface.getCreatorFromSelectedTvShow(tvId = media.getMediaId().toString())
                 .enqueue(object : Callback<GetCreatorFromTvShowResponse> {
                     override fun onResponse(call: Call<GetCreatorFromTvShowResponse>, response: Response<GetCreatorFromTvShowResponse>) {
                         val responseBody = response.body()
                         if (response.isSuccessful && responseBody != null) {
-                            callListener.onCastAndCrewLoaded(media, castList, crewList, responseBody.creator)
+                            callListener.onCreatorLoaded(media, responseBody.creator)
                         } else {
                             callListener.onFailure(media)
                         }
@@ -179,7 +179,6 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                         callListener.onFailure(media)
                     }
                 })
-        return
     }
 
     fun getGenreList(): List<GenreItem> {
@@ -212,7 +211,8 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
     }
 
     interface LoadCastAndCrewListener {
-        fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList : List<Crew>?, creatorList : List<Crew>?)
+        fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList : List<Crew>?)
+        fun onCreatorLoaded(media: Media, creatorList : List<Crew>?)
         fun onFailure(media: Media)
     }
 
