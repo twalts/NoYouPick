@@ -1,7 +1,6 @@
 package com.hbkapps.noyoupick.movietvlist
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Cast
 import com.hbkapps.noyoupick.model.Crew
@@ -65,9 +65,14 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                 holder.collapseDetails()
                 mediaListExpandedState[position] = false
             } else {
-                if (media.getMediaId() != null && media.getMediaDirectors() == null) {
-                     currentViewHolder = holder
-                     tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
+                if (media.getMediaId() != null && media.getMediaDirectorsOrCreators() == null) {
+                    currentViewHolder = holder
+                    if (media.getMediaType() == Constants.MEDIA_TYPE_MOVIE) {
+                        tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
+                    } else {
+                        tmdbRepository.loadCastAndCrewFromTvShow(media, loadCastAndCrewListener)
+                        tmdbRepository.loadCreatorFromTvShow(media, loadCastAndCrewListener)
+                    }
                 } else {
                     holder.expandDetails()
                 }
@@ -81,15 +86,23 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
             media.crewList = crewList
             media.castList = castList
-            currentViewHolder?.director?.text = media.getMediaDirectors()
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
             currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
+        }
+
+        override fun onCreatorLoaded(media: Media, creatorList: List<Crew>?) {
+            media.creatorList = creatorList
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
         }
 
         override fun onFailure(media: Media) {
             media.crewList = emptyList()
             media.castList = emptyList()
-            currentViewHolder?.director?.text = media.getMediaDirectors()
+            media.creatorList = emptyList()
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.cast?.text = media.getMediaCast()
             currentViewHolder?.expandDetails()
         }
@@ -102,7 +115,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         private val poster: ImageView = itemView.poster
         private val backdrop: ImageView = itemView.backdrop
         private val userRating : TextView = itemView.userRating
-        val director: TextView = itemView.director
+        val directorOrCreator: TextView = itemView.directorOrCreator
         val cast : TextView = itemView.cast
 
         private var constraintLayout: ConstraintLayout = itemView.findViewById(R.id.root)
@@ -126,7 +139,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             //todo move userRating text to string resource
             poster.clipToOutline = true
             userRating.text = "User Rating: ${media.getMediaUserRating()}/10"
-            director.text = media.getMediaDirectors()
+            directorOrCreator.text = media.getMediaDirectorsOrCreators()
             cast.text = media.getMediaCast()
         }
 
@@ -144,6 +157,10 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
 
         fun setOnClickListener(onClickListener: View.OnClickListener) {
             constraintLayout.setOnClickListener(onClickListener)
+        }
+
+        fun changeCrewHeader(media : Media) {
+            itemView.directorHeader.text = media.getMediaCrewHeader()
         }
     }
 

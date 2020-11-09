@@ -41,5 +41,17 @@ interface TmdbApiInterface {
     fun getCreditsFromSelectedMovie(
             @Path("movie_id") movieId : String,
             @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa"
-    ): Call<GetCreditsFromMovieResponse>
+    ): Call<GetCreditsFromMediaResponse>
+
+    @GET("tv/{tv_id}/season/1/credits")
+    fun getCreditsFromSelectedTvShow(
+            @Path("tv_id") tvId : String,
+            @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa"
+    ): Call<GetCreditsFromMediaResponse>
+
+    @GET("tv/{tv_id}")
+    fun getCreatorFromSelectedTvShow(
+            @Path("tv_id") tvId : String,
+            @Query("api_key") apiKey: String = "053f362926aa9b29f950d9d50890e5aa"
+    ): Call<GetCreatorFromTvShowResponse>
 }
