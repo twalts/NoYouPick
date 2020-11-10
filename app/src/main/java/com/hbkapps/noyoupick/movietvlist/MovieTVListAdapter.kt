@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Cast
@@ -71,7 +72,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                         tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
                     } else {
                         tmdbRepository.loadCastAndCrewFromTvShow(media, loadCastAndCrewListener)
-                        tmdbRepository.loadCreatorFromTvShow(media, loadCastAndCrewListener)
+                        tmdbRepository.loadCreatorFromTvShow(media, loadCreatorListener)
                     }
                 } else {
                     holder.expandDetails()
@@ -81,17 +82,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         }
     }
 
-
-    private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
-        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
-            media.crewList = crewList
-            media.castList = castList
-            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
-            currentViewHolder?.changeCrewHeader(media)
-            currentViewHolder?.cast?.text = media.getMediaCast()
-            currentViewHolder?.expandDetails()
-        }
-
+    private val loadCreatorListener : TmdbRepository.LoadCreatorListener = object  : TmdbRepository.LoadCreatorListener {
         override fun onCreatorLoaded(media: Media, creatorList: List<Crew>?) {
             media.creatorList = creatorList
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
@@ -99,14 +90,71 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         }
 
         override fun onFailure(media: Media) {
-            media.crewList = emptyList()
-            media.castList = emptyList()
             media.creatorList = emptyList()
+
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
-            currentViewHolder?.cast?.text = media.getMediaCast()
+            currentViewHolder?.changeCrewHeader(media)
+        }
+    }
+
+    private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
+        override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
+            media.crewList = crewList
+            media.castList = castList
+
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
+            initializePosters(media)
             currentViewHolder?.expandDetails()
         }
 
+
+        override fun onFailure(media: Media) {
+            media.crewList = emptyList()
+            media.castList = emptyList()
+
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.expandDetails()
+        }
+
+        fun initializePosters(media: Media) {
+            currentViewHolder?.cast1?.text = media.castList?.getOrNull(0)?.name
+            currentViewHolder?.cast2?.text = media.castList?.getOrNull(1)?.name
+            currentViewHolder?.cast3?.text = media.castList?.getOrNull(2)?.name
+            currentViewHolder?.cast4?.text = media.castList?.getOrNull(3)?.name
+
+            val requestOptions : RequestOptions = object : RequestOptions() {}
+
+            currentViewHolder?.itemView?.let {
+                if (media.castList?.getOrNull(0) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(0)?.profilePath}")
+                            .into(it.poster1)
+                }
+
+                if (media.castList?.getOrNull(1) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(1)?.profilePath}")
+                            .into(it.poster2)
+                }
+
+                if (media.castList?.getOrNull(2) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(2)?.profilePath}")
+                            .into(it.poster3)
+                }
+
+                if (media.castList?.getOrNull(3) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(3)?.profilePath}")
+                            .into(it.poster4)
+                }
+            }
+        }
     }
 
     class MovieTvViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -116,7 +164,10 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         private val backdrop: ImageView = itemView.backdrop
         private val userRating : TextView = itemView.userRating
         val directorOrCreator: TextView = itemView.directorOrCreator
-        val cast : TextView = itemView.cast
+        val cast1 : TextView = itemView.cast1
+        val cast2 : TextView = itemView.cast2
+        val cast3 : TextView = itemView.cast3
+        val cast4 : TextView = itemView.cast4
 
         private var constraintLayout: ConstraintLayout = itemView.findViewById(R.id.root)
         private val collapsedConstraintSet: ConstraintSet = ConstraintSet()
@@ -131,16 +182,15 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             title.text = media.getMediaTitle()
             overview.text = media.getMediaOverview()
             Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${media.getMediaPosterPath()}")
+                    .load("https://image.tmdb.org/t/p/w500${media.getMediaPosterPath()}")
                     .into(poster)
             Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${media.getMediaBackdropPath()}")
+                    .load("https://image.tmdb.org/t/p/w500${media.getMediaBackdropPath()}")
                     .into(backdrop)
-            //todo move userRating text to string resource
             poster.clipToOutline = true
+            //todo move userRating text to string resource
             userRating.text = "User Rating: ${media.getMediaUserRating()}/10"
             directorOrCreator.text = media.getMediaDirectorsOrCreators()
-            cast.text = media.getMediaCast()
         }
 
         fun collapseDetails() {
