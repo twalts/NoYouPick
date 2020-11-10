@@ -19,7 +19,6 @@ import com.hbkapps.noyoupick.model.Crew
 import com.hbkapps.noyoupick.model.Media
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.media_list_cardview_item.view.*
-import timber.log.Timber
 
 class MovieTVListAdapter(private val mediaList: List<Media>,
                          private val tmdbRepository: TmdbRepository)
@@ -88,8 +87,6 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.creatorList = creatorList
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
-
-            Timber.e("creatorlisterner ${media.getMediaDirectorsOrCreators()}")
         }
 
         override fun onFailure(media: Media) {
@@ -110,8 +107,6 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             initializePosters(media)
 
             currentViewHolder?.expandDetails()
-
-            Timber.e("castcrewlistener ${media.getMediaDirectorsOrCreators()}")
         }
 
 
