@@ -163,7 +163,7 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
                 })
     }
 
-    fun loadCreatorFromTvShow(media: Media, callListener: LoadCastAndCrewListener) {
+    fun loadCreatorFromTvShow(media: Media, callListener: LoadCreatorListener) {
         tmdbApiInterface.getCreatorFromSelectedTvShow(tvId = media.getMediaId().toString())
                 .enqueue(object : Callback<GetCreatorFromTvShowResponse> {
                     override fun onResponse(call: Call<GetCreatorFromTvShowResponse>, response: Response<GetCreatorFromTvShowResponse>) {
@@ -212,6 +212,11 @@ class TmdbRepository @Inject constructor(private val tmdbApiInterface: TmdbApiIn
 
     interface LoadCastAndCrewListener {
         fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList : List<Crew>?)
+        //fun onCreatorLoaded(media: Media, creatorList : List<Crew>?)
+        fun onFailure(media: Media)
+    }
+
+    interface LoadCreatorListener {
         fun onCreatorLoaded(media: Media, creatorList : List<Crew>?)
         fun onFailure(media: Media)
     }

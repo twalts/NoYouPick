@@ -71,7 +71,7 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
                         tmdbRepository.loadCastAndCrewFromMovie(media, loadCastAndCrewListener)
                     } else {
                         tmdbRepository.loadCastAndCrewFromTvShow(media, loadCastAndCrewListener)
-                        tmdbRepository.loadCreatorFromTvShow(media, loadCastAndCrewListener)
+                        tmdbRepository.loadCreatorFromTvShow(media, loadCreatorListener)
                     }
                 } else {
                     holder.expandDetails()
@@ -81,6 +81,20 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         }
     }
 
+    private val loadCreatorListener : TmdbRepository.LoadCreatorListener = object  : TmdbRepository.LoadCreatorListener {
+        override fun onCreatorLoaded(media: Media, creatorList: List<Crew>?) {
+            media.creatorList = creatorList
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
+        }
+
+        override fun onFailure(media: Media) {
+            media.creatorList = emptyList()
+            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
+            currentViewHolder?.changeCrewHeader(media)
+        }
+
+    }
 
     private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
         override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
@@ -94,16 +108,11 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             currentViewHolder?.expandDetails()
         }
 
-        override fun onCreatorLoaded(media: Media, creatorList: List<Crew>?) {
-            media.creatorList = creatorList
-            currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
-            currentViewHolder?.changeCrewHeader(media)
-        }
 
         override fun onFailure(media: Media) {
             media.crewList = emptyList()
             media.castList = emptyList()
-            media.creatorList = emptyList()
+
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.cast1?.text = media.getMediaCast()?.get(1)?.name
             currentViewHolder?.expandDetails()
