@@ -86,9 +86,11 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         override fun onCastAndCrewLoaded(media: Media, castList: List<Cast>?, crewList: List<Crew>?) {
             media.crewList = crewList
             media.castList = castList
+
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
-            currentViewHolder?.cast?.text = media.getMediaCast()
+            initializePosters(media)
+
             currentViewHolder?.expandDetails()
         }
 
@@ -103,10 +105,34 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.castList = emptyList()
             media.creatorList = emptyList()
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
-            currentViewHolder?.cast?.text = media.getMediaCast()
+            currentViewHolder?.cast1?.text = media.getMediaCast()?.get(1)?.name
             currentViewHolder?.expandDetails()
         }
 
+        fun initializePosters(media: Media) {
+            currentViewHolder?.cast1?.text = media.getMediaCast()?.get(0)?.name
+            currentViewHolder?.cast2?.text = media.getMediaCast()?.get(1)?.name
+            currentViewHolder?.cast3?.text = media.getMediaCast()?.get(2)?.name
+            currentViewHolder?.cast4?.text = media.getMediaCast()?.get(3)?.name
+
+            currentViewHolder?.itemView?.let {
+                Glide.with(it)
+                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(0)?.profilePath}")
+                        .into(it.poster1)
+
+                Glide.with(it)
+                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(1)?.profilePath}")
+                        .into(it.poster2)
+
+                Glide.with(it)
+                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(2)?.profilePath}")
+                        .into(it.poster3)
+
+                Glide.with(it)
+                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(3)?.profilePath}")
+                        .into(it.poster4)
+            }
+        }
     }
 
     class MovieTvViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -116,7 +142,10 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         private val backdrop: ImageView = itemView.backdrop
         private val userRating : TextView = itemView.userRating
         val directorOrCreator: TextView = itemView.directorOrCreator
-        val cast : TextView = itemView.cast
+        val cast1 : TextView = itemView.cast1
+        val cast2 : TextView = itemView.cast2
+        val cast3 : TextView = itemView.cast3
+        val cast4 : TextView = itemView.cast4
 
         private var constraintLayout: ConstraintLayout = itemView.findViewById(R.id.root)
         private val collapsedConstraintSet: ConstraintSet = ConstraintSet()
@@ -131,16 +160,15 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             title.text = media.getMediaTitle()
             overview.text = media.getMediaOverview()
             Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${media.getMediaPosterPath()}")
+                    .load("https://image.tmdb.org/t/p/w500${media.getMediaPosterPath()}")
                     .into(poster)
             Glide.with(itemView)
-                    .load("https://image.tmdb.org/t/p/w342${media.getMediaBackdropPath()}")
+                    .load("https://image.tmdb.org/t/p/w500${media.getMediaBackdropPath()}")
                     .into(backdrop)
-            //todo move userRating text to string resource
             poster.clipToOutline = true
+            //todo move userRating text to string resource
             userRating.text = "User Rating: ${media.getMediaUserRating()}/10"
             directorOrCreator.text = media.getMediaDirectorsOrCreators()
-            cast.text = media.getMediaCast()
         }
 
         fun collapseDetails() {

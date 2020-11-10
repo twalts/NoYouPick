@@ -66,24 +66,10 @@ abstract class Media {
         } else ""
     }
 
-    fun getMediaCast(): String? {
-        return when {
-            castList == null -> null
-            castList!!.isEmpty() -> ""
-            else -> parseCast(castList)
+    fun getMediaCast(): List<Cast>? {
+        return when (castList) {
+            null -> null
+            else -> return castList
         }
-    }
-
-    private fun parseCast(castList : List<Cast>?) : String {
-        return if (castList != null) {
-            val cast = StringBuilder()
-            var x = 0
-            while (x < castList.size) {
-                castList[x].name?.let { cast.append("$it\n") }
-                x++
-                if (x == 5) break
-            }
-            cast.toString()
-        } else ""
     }
 }
