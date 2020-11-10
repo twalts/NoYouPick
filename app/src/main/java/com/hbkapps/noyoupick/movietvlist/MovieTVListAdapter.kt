@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.R
 import com.hbkapps.noyoupick.model.Cast
@@ -18,6 +19,7 @@ import com.hbkapps.noyoupick.model.Crew
 import com.hbkapps.noyoupick.model.Media
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import kotlinx.android.synthetic.main.media_list_cardview_item.view.*
+import timber.log.Timber
 
 class MovieTVListAdapter(private val mediaList: List<Media>,
                          private val tmdbRepository: TmdbRepository)
@@ -86,6 +88,8 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.creatorList = creatorList
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
+
+            Timber.e("creatorlisterner ${media.getMediaDirectorsOrCreators()}")
         }
 
         override fun onFailure(media: Media) {
@@ -106,6 +110,8 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             initializePosters(media)
 
             currentViewHolder?.expandDetails()
+
+            Timber.e("castcrewlistener ${media.getMediaDirectorsOrCreators()}")
         }
 
 
@@ -119,27 +125,41 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
         }
 
         fun initializePosters(media: Media) {
-            currentViewHolder?.cast1?.text = media.getMediaCast()?.get(0)?.name
-            currentViewHolder?.cast2?.text = media.getMediaCast()?.get(1)?.name
-            currentViewHolder?.cast3?.text = media.getMediaCast()?.get(2)?.name
-            currentViewHolder?.cast4?.text = media.getMediaCast()?.get(3)?.name
+            currentViewHolder?.cast1?.text = media.getMediaCast()?.getOrNull(0)?.name
+            currentViewHolder?.cast2?.text = media.getMediaCast()?.getOrNull(1)?.name
+            currentViewHolder?.cast3?.text = media.getMediaCast()?.getOrNull(2)?.name
+            currentViewHolder?.cast4?.text = media.getMediaCast()?.getOrNull(3)?.name
+
+            val requestOptions : RequestOptions = object : RequestOptions() {}
 
             currentViewHolder?.itemView?.let {
-                Glide.with(it)
-                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(0)?.profilePath}")
-                        .into(it.poster1)
+                if (media.getMediaCast()?.getOrNull(0) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(0)?.profilePath}")
+                            .into(it.poster1)
+                }
 
-                Glide.with(it)
-                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(1)?.profilePath}")
-                        .into(it.poster2)
+                if (media.getMediaCast()?.getOrNull(1) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(1)?.profilePath}")
+                            .into(it.poster2)
+                }
 
-                Glide.with(it)
-                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(2)?.profilePath}")
-                        .into(it.poster3)
+                if (media.getMediaCast()?.getOrNull(2) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(2)?.profilePath}")
+                            .into(it.poster3)
+                }
 
-                Glide.with(it)
-                        .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.get(3)?.profilePath}")
-                        .into(it.poster4)
+                if (media.getMediaCast()?.getOrNull(3) != null) {
+                    Glide.with(it)
+                            .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
+                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(3)?.profilePath}")
+                            .into(it.poster4)
+                }
             }
         }
     }
