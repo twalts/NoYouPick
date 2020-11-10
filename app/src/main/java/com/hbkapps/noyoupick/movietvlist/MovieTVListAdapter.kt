@@ -91,10 +91,10 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
 
         override fun onFailure(media: Media) {
             media.creatorList = emptyList()
+
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
         }
-
     }
 
     private val loadCastAndCrewListener : TmdbRepository.LoadCastAndCrewListener = object : TmdbRepository.LoadCastAndCrewListener {
@@ -105,7 +105,6 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
             currentViewHolder?.changeCrewHeader(media)
             initializePosters(media)
-
             currentViewHolder?.expandDetails()
         }
 
@@ -115,44 +114,43 @@ class MovieTVListAdapter(private val mediaList: List<Media>,
             media.castList = emptyList()
 
             currentViewHolder?.directorOrCreator?.text = media.getMediaDirectorsOrCreators()
-            currentViewHolder?.cast1?.text = media.getMediaCast()?.get(1)?.name
             currentViewHolder?.expandDetails()
         }
 
         fun initializePosters(media: Media) {
-            currentViewHolder?.cast1?.text = media.getMediaCast()?.getOrNull(0)?.name
-            currentViewHolder?.cast2?.text = media.getMediaCast()?.getOrNull(1)?.name
-            currentViewHolder?.cast3?.text = media.getMediaCast()?.getOrNull(2)?.name
-            currentViewHolder?.cast4?.text = media.getMediaCast()?.getOrNull(3)?.name
+            currentViewHolder?.cast1?.text = media.castList?.getOrNull(0)?.name
+            currentViewHolder?.cast2?.text = media.castList?.getOrNull(1)?.name
+            currentViewHolder?.cast3?.text = media.castList?.getOrNull(2)?.name
+            currentViewHolder?.cast4?.text = media.castList?.getOrNull(3)?.name
 
             val requestOptions : RequestOptions = object : RequestOptions() {}
 
             currentViewHolder?.itemView?.let {
-                if (media.getMediaCast()?.getOrNull(0) != null) {
+                if (media.castList?.getOrNull(0) != null) {
                     Glide.with(it)
                             .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
-                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(0)?.profilePath}")
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(0)?.profilePath}")
                             .into(it.poster1)
                 }
 
-                if (media.getMediaCast()?.getOrNull(1) != null) {
+                if (media.castList?.getOrNull(1) != null) {
                     Glide.with(it)
                             .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
-                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(1)?.profilePath}")
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(1)?.profilePath}")
                             .into(it.poster2)
                 }
 
-                if (media.getMediaCast()?.getOrNull(2) != null) {
+                if (media.castList?.getOrNull(2) != null) {
                     Glide.with(it)
                             .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
-                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(2)?.profilePath}")
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(2)?.profilePath}")
                             .into(it.poster3)
                 }
 
-                if (media.getMediaCast()?.getOrNull(3) != null) {
+                if (media.castList?.getOrNull(3) != null) {
                     Glide.with(it)
                             .applyDefaultRequestOptions(requestOptions.placeholder(R.drawable.placeholder_person))
-                            .load("https://image.tmdb.org/t/p/w500${media.getMediaCast()?.getOrNull(3)?.profilePath}")
+                            .load("https://image.tmdb.org/t/p/w500${media.castList?.getOrNull(3)?.profilePath}")
                             .into(it.poster4)
                 }
             }

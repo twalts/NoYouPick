@@ -65,11 +65,4 @@ abstract class Media {
             creators.toString()
         } else ""
     }
-
-    fun getMediaCast(): List<Cast>? {
-        return when (castList) {
-            null -> null
-            else -> return castList
-        }
-    }
 }
