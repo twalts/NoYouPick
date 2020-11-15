@@ -1,5 +1,6 @@
 package com.hbkapps.noyoupick.genreselection
 
+import com.hbkapps.noyoupick.Constants
 import com.hbkapps.noyoupick.model.GenreItem
 import com.hbkapps.noyoupick.repository.TmdbRepository
 import org.junit.After
@@ -12,29 +13,24 @@ class GenreSelectionPresenterTest {
     private val mockRepository = mock(TmdbRepository::class.java)
     private val mockLoadMediaListener = mock(TmdbRepository.LoadMediaListener::class.java)
     private lateinit var presenter: GenreSelectionPresenter
-    private var mockGenreList : ArrayList<GenreItem> = ArrayList()
     private val mockGenre = mock(GenreItem::class.java)
 
     @Before
     fun setUp() {
-        //initialize presenter
         presenter = GenreSelectionPresenter(mockRepository)
-        //add a mock GenreItem to mockGenreList
-        mockGenreList.add(mockGenre)
-        //set mockGenreList as the selectedGenreList in presenter
-        presenter.setSelectedGenresList(mockGenreList)
+        presenter.addOrRemoveGenreItemFromList(mockGenre)
     }
 
     @Test
     fun onSubmitButtonClicked_Calls_getChosenMediaType_If_List_isNotEmptyOrNull() {
+        `when`(mockRepository.getChosenMediaType()).thenReturn(Constants.MEDIA_TYPE_MOVIE)
         presenter.onSubmitBtnClicked(mockLoadMediaListener)
-        verify(mockRepository).getChosenMediaType()
+        verify(mockRepository).loadMoviesListFromSelection(mockLoadMediaListener, "0")
     }
 
     @Test
     fun onSubmitButtonClicked_Does_Nothing_If_List_isEmpty() {
-        mockGenreList.remove(mockGenre)
-        presenter.setSelectedGenresList(mockGenreList)
+        presenter.addOrRemoveGenreItemFromList(mockGenre)
         presenter.onSubmitBtnClicked(mockLoadMediaListener)
         verifyNoInteractions(mockRepository)
     }

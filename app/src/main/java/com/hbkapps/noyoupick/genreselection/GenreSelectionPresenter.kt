@@ -55,11 +55,6 @@ class GenreSelectionPresenter @Inject constructor(private val tmdbRepository: Tm
         return selectedGenreList
     }
 
-    //Don't need this function for the app but is needed for testing
-    fun setSelectedGenresList(newList : ArrayList<GenreItem>) {
-        selectedGenreList = newList
-    }
-
     interface GenreSelectionInterface {
         fun setSubmitButtonHighlighted()
         fun setSubmitButtonUnhighlighted()
