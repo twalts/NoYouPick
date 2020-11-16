@@ -22,10 +22,11 @@ class GenreSelectionPresenterTest {
     }
 
     @Test
-    fun onSubmitButtonClicked_Calls_getChosenMediaType_If_List_isNotEmptyOrNull() {
+    fun onSubmitButtonClicked_Calls_loadMedia_Function_If_List_isNotEmptyOrNull() {
+        `when`(mockGenre.id).thenReturn(531219)
         `when`(mockRepository.getChosenMediaType()).thenReturn(Constants.MEDIA_TYPE_MOVIE)
         presenter.onSubmitBtnClicked(mockLoadMediaListener)
-        verify(mockRepository).loadMoviesListFromSelection(mockLoadMediaListener, "0")
+        verify(mockRepository).loadMoviesListFromSelection(mockLoadMediaListener, mockGenre.id.toString())
     }
 
     @Test
