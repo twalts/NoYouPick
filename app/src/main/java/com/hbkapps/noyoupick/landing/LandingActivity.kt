@@ -68,11 +68,13 @@ class LandingActivity : BaseActivity() {
         btnPickMovie.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
             this.background = ContextCompat.getDrawable(this@LandingActivity, R.drawable.button_rectangular_stroke_background)
+            this.tag = R.drawable.button_rectangular_stroke_background
             this.setTypeface(null, Typeface.NORMAL)
         }
         btnPickTelevision.apply {
             this.setTextColor(ContextCompat.getColor(this@LandingActivity, R.color.white))
             this.background = ContextCompat.getDrawable(this@LandingActivity, R.drawable.button_rectangular_stroke_background)
+            this.tag = R.drawable.button_rectangular_stroke_background
             this.setTypeface(null, Typeface.NORMAL)
         }
     }
@@ -80,6 +82,7 @@ class LandingActivity : BaseActivity() {
     private fun setSelected(v : TextView) {
         v.setTextColor(ContextCompat.getColor(this, R.color.off_black))
         v.background = ContextCompat.getDrawable(this, R.drawable.button_rectangular_filled_background)
+        v.tag = R.drawable.button_rectangular_filled_background
         v.setTypeface(null, Typeface.BOLD)
     }
 }
