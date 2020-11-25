@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "602817275173",
+    "firebase_url": "https://noyoupick-8f4e4.firebaseio.com",
+    "project_id": "noyoupick-8f4e4",
+    "storage_bucket": "noyoupick-8f4e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602817275173:android:82b3c85a6952d56052e6cc",
+        "android_client_info": {
+          "package_name": "com.hbkapps.noyoupick"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "602817275173-l4upjb0q5ivlq0g07o6fmg2va64e70vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCzaZWmN7k7kvllV8G8IefVPT4B76Lw2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "602817275173-l4upjb0q5ivlq0g07o6fmg2va64e70vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
